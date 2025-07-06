@@ -1,0 +1,171 @@
+<!-- 添加/编辑卡片的Modal对话框 -->
+<div id="card-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-xl max-w-md w-full mx-4 transform transition-all">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="modal-title" class="text-lg font-semibold text-text-light dark:text-text-dark">添加新卡片</h3>
+                <button id="close-modal-btn" class="text-muted-light dark:text-muted-dark hover:text-text-light dark:hover:text-text-dark">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="card-form" class="space-y-4">
+                <input type="hidden" id="card-id" value="">
+                
+                <div>
+                    <label for="card-title" class="block text-sm font-medium text-text-light dark:text-text-dark mb-1">卡片标题 *</label>
+                    <input type="text" id="card-title" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark" required>
+                </div>
+                
+                <div>
+                    <label for="card-description" class="block text-sm font-medium text-text-light dark:text-text-dark mb-1">描述 *</label>
+                    <input type="text" id="card-description" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark" required>
+                </div>
+                
+                <div>
+                    <label for="card-url" class="block text-sm font-medium text-text-light dark:text-text-dark mb-1">链接 URL *</label>
+                    <input type="url" id="card-url" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark" required>
+                </div>
+                
+                <div>
+                    <label for="card-icon" class="block text-sm font-medium text-text-light dark:text-text-dark mb-1">图标 (Font Awesome)</label>
+                    <div class="flex space-x-2">
+                        <input type="text" id="card-icon" class="flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark" placeholder="fas fa-link">
+                        <div id="icon-preview" class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary-light/10 dark:bg-primary-dark/20 text-primary-light dark:text-primary-dark cursor-pointer hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors">
+                            <i class="fas fa-link"></i>
+                        </div>
+                    </div>
+                    <p class="text-xs text-muted-light dark:text-muted-dark mt-1">留空将使用默认图标 (fas fa-link)</p>
+                    
+                    <!-- 示例图标选择器 -->
+                    <div class="mt-3">
+                        <p class="text-xs font-medium text-text-light dark:text-text-dark mb-2">常用图标:</p>
+                        <div id="icon-examples" class="grid grid-cols-8 gap-2">
+                            <button type="button" class="icon-example-btn w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-link">
+                                <i class="fas fa-link text-sm"></i>
+                            </button>
+                            <button type="button" class="icon-example-btn w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-server">
+                                <i class="fas fa-server text-sm"></i>
+                            </button>
+                            <button type="button" class="icon-example-btn w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-database">
+                                <i class="fas fa-database text-sm"></i>
+                            </button>
+                            <button type="button" class="icon-example-btn w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-terminal">
+                                <i class="fas fa-terminal text-sm"></i>
+                            </button>
+                            <button type="button" class="icon-example-btn w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-code">
+                                <i class="fas fa-code text-sm"></i>
+                            </button>
+                            <button type="button" class="icon-example-btn w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-cloud">
+                                <i class="fas fa-cloud text-sm"></i>
+                            </button>
+                            <button type="button" class="icon-example-btn w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-cog">
+                                <i class="fas fa-cog text-sm"></i>
+                            </button>
+                            <button type="button" class="icon-example-btn w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-tools">
+                                <i class="fas fa-tools text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between pt-2">
+                    <div>
+                        <button type="button" id="delete-card-btn" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors hidden">
+                            删除
+                        </button>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button type="button" id="cancel-btn" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-text-light dark:text-text-dark rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                            取消
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-primary-light dark:bg-primary-dark text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-500 transition-colors">
+                            保存
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 倒计时管理Modal对话框 -->
+<div id="countdown-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-card-light dark:bg-card-dark rounded-xl shadow-xl max-w-2xl w-full mx-4 transform transition-all max-h-[90vh] overflow-y-auto">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="countdown-modal-title" class="text-lg font-semibold text-text-light dark:text-text-dark">倒计时管理</h3>
+                <button id="close-countdown-modal-btn" class="text-muted-light dark:text-muted-dark hover:text-text-light dark:hover:text-text-dark">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- 倒计时列表 -->
+            <div id="countdown-list" class="mb-6">
+                <!-- 动态加载的倒计时列表 -->
+            </div>
+            
+            <!-- 添加新倒计时表单 -->
+            <div class="border-t border-gray-200 dark:border-gray-600 pt-4">
+                <h4 class="text-md font-medium text-text-light dark:text-text-dark mb-3">添加新倒计时</h4>                <form id="countdown-form" class="space-y-4" novalidate>
+                    <input type="hidden" id="countdown-id" value="">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="countdown-title" class="block text-sm font-medium text-text-light dark:text-text-dark mb-1">事件标题 *</label>
+                            <input type="text" id="countdown-title" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark" required>
+                        </div>                        <div>
+                            <label for="countdown-date" class="block text-sm font-medium text-text-light dark:text-text-dark mb-1">目标日期 *</label>
+                            <input type="date" id="countdown-date" min="1000-01-01" max="9999-12-31" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark" required>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="countdown-description" class="block text-sm font-medium text-text-light dark:text-text-dark mb-1">描述</label>
+                        <input type="text" id="countdown-description" class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark">
+                    </div>
+                    
+                    <div>
+                        <label for="countdown-icon" class="block text-sm font-medium text-text-light dark:text-text-dark mb-1">图标 (Font Awesome)</label>
+                        <div class="flex space-x-2">
+                            <input type="text" id="countdown-icon" class="flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary-light dark:focus:ring-primary-dark" placeholder="far fa-calendar-alt">
+                            <div id="countdown-icon-preview" class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary-light/10 dark:bg-primary-dark/20 text-primary-light dark:text-primary-dark">
+                                <i class="far fa-calendar-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between pt-2">
+                        <div>
+                            <button type="button" id="delete-countdown-btn" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors hidden">
+                                删除
+                            </button>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button type="button" id="cancel-countdown-btn" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-text-light dark:text-text-dark rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+                                取消
+                            </button>
+                            <button type="submit" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+                                保存
+                            </button>
+                        </div>
+                    </div>                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 自定义确认对话框 -->
+<div id="custom-confirm-overlay" class="custom-confirm-overlay">
+    <div class="custom-confirm-dialog">
+        <div class="confirm-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="confirm-title" id="confirm-title">确认删除</div>
+        <div class="confirm-message" id="confirm-message">确定要删除这个导航项吗？此操作不可撤销。</div>
+        <div class="confirm-buttons">
+            <button class="confirm-btn confirm-btn-cancel" id="confirm-cancel">取消</button>
+            <button class="confirm-btn confirm-btn-confirm" id="confirm-ok">删除</button>
+        </div>
+    </div>
+</div>
