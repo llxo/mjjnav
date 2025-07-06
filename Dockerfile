@@ -20,10 +20,11 @@ RUN mkdir -p /app/data
 RUN chmod +x /app/docker-entrypoint.sh
 
 # 暴露端口
-EXPOSE 3000
+EXPOSE 721
 
 # 设置环境变量
 ENV NODE_ENV=production
+ENV DOCKER_ENV=true
 
 # 使用自定义入口点来验证环境变量
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
