@@ -16,11 +16,17 @@ COPY . .
 # 创建数据库目录
 RUN mkdir -p /app/data
 
+# 添加启动脚本权限
+RUN chmod +x /app/docker-entrypoint.sh
+
 # 暴露端口
 EXPOSE 3000
 
 # 设置环境变量
 ENV NODE_ENV=production
+
+# 使用自定义入口点来验证环境变量
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
 
 # 启动应用程序
 CMD ["npm", "start"]

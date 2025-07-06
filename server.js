@@ -27,9 +27,24 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// 验证必要的环境变量
+function validateEnvironment() {
+  if (!process.env.JWT_SECRET) {
+    console.error('错误: JWT_SECRET环境变量未设置');
+    console.error('请创建.env文件并设置JWT_SECRET，可参考.env.example文件');
+    return false;
+  }
+  return true;
+}
+
 // 启动服务器
 async function startServer() {
   try {
+    // 验证环境变量
+    if (!validateEnvironment()) {
+      process.exit(1);
+    }
+    
     await initDatabase();
     app.listen(PORT, () => {
       console.log(`服务器运行在 http://localhost:${PORT}`);

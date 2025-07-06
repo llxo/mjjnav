@@ -1,7 +1,11 @@
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { db } = require('../db/init');
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  console.error('错误: 未设置JWT_SECRET环境变量，请在.env文件中设置此变量');
+  process.exit(1);
+}
 
 // 生成密钥的哈希值
 function hashSecretKey(key) {

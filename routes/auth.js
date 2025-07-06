@@ -4,7 +4,11 @@ const jwt = require('jsonwebtoken');
 const { db } = require('../db/init');
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  console.error('错误: 未设置JWT_SECRET环境变量，请在.env文件中设置此变量');
+  process.exit(1);
+}
 
 // 用户登录
 router.post('/login', (req, res) => {

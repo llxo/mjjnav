@@ -1,3 +1,6 @@
+data/
+navigation.db
+
 # Logs
 logs
 *.log

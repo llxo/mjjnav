@@ -9,9 +9,8 @@ services:
     volumes:
       # 将数据库文件映射到主机，确保数据持久化
       - ./data:/app/data
-    environment:
-      - NODE_ENV=production
-      - PORT=3000
+    env_file:
+      - .env
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/"]
