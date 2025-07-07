@@ -18,11 +18,24 @@ class SecretKeyManager {
                 // 阻止页面其他功能的初始化
                 this.blockPageInteraction();
             } else {
-                console.log('密钥已设置，允许正常使用');
-                // 允许页面正常使用，不需要立即验证
-                this.unblockPageInteraction();
+                console.log('密钥已设置，需要验证');
+                // 检查会话是否有效，无效则要求验证
+                if (this.sessionToken) {
+                    // 尝试验证当前会话token
+                    const isValid = await this.checkAuthentication();
+                    if (isValid) {
+                        console.log('会话有效，允许正常使用');
+                        this.unblockPageInteraction();
+                    } else {
+                        console.log('会话无效，需要重新验证');
+                        // 在这里不需要特别操作，因为checkAuthentication会自动显示验证界面
+                    }                } else {
+                    console.log('无会话token，显示验证界面');
+                    // 显示验证界面并阻止页面交互
+                    this.showAuthModal();
+                    this.blockPageInteraction();
+                }
             }
-            // 不再自动检查会话认证，等待用户操作时再检查
         } catch (error) {
             console.error('初始化密钥管理失败:', error);
             // 出错时也强制显示设置界面
@@ -41,9 +54,7 @@ class SecretKeyManager {
             console.error('检查密钥失败:', error);
             return false;
         }
-    }
-
-    async checkAuthentication() {
+    }    async checkAuthentication(showModal = true) {
         // 如果有会话token，检查是否仍然有效
         if (this.sessionToken) {
             try {
@@ -66,8 +77,10 @@ class SecretKeyManager {
             }
         }
         
-        // 显示密钥输入界面
-        this.showAuthModal();
+        // 如果需要显示验证界面，则显示
+        if (showModal) {
+            this.showAuthModal();
+        }
         return false;
     }
 
@@ -380,9 +393,7 @@ class SecretKeyManager {
             body: JSON.stringify({ secretKey })
         });
 
-        const data = await response.json();
-
-        if (response.ok) {
+        const data = await response.json();        if (response.ok) {
             // 验证成功，保存会话token
             const sessionToken = response.headers.get('x-session-token');
             if (sessionToken) {
@@ -395,6 +406,9 @@ class SecretKeyManager {
             if (modal) {
                 modal.remove();
             }
+            
+            // 解除页面阻止（如果存在）
+            this.unblockPageInteraction();
             
             // 刷新页面数据
             if (window.app && window.app.loadNavigationItems) {
