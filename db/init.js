@@ -3,13 +3,12 @@ const path = require('path');
 const fs = require('fs');
 
 // 创建数据库连接
-// 在Docker环境中，数据库文件存储在 /app/data 目录
 const isDocker = process.env.NODE_ENV === 'production' || process.env.DOCKER_ENV;
-const dbDir = isDocker ? '/app/data' : __dirname;
-const dbPath = path.join(dbDir, isDocker ? 'navigation.db' : '../navigation.db');
+const dbDir = isDocker ? '/app/data' : path.join(__dirname, '../data');
+const dbPath = path.join(dbDir, 'navigation.db');
 
 // 确保数据目录存在
-if (isDocker && !fs.existsSync(dbDir)) {
+if (!fs.existsSync(dbDir)) {
   fs.mkdirSync(dbDir, { recursive: true });
 }
 
