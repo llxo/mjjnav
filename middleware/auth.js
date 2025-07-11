@@ -132,32 +132,39 @@ function sessionAuthenticate(req, res, next) {
         return next();
       }
       
-      // 检查请求头中的会话token
-      const sessionToken = req.headers['x-session-token'];
-      const secretKey = req.headers['x-secret-key'];
-      
-      if (sessionToken && isValidSessionToken(sessionToken)) {
-        // 有效的会话token，允许通过
-        next();
-      } else if (secretKey) {
-        // 验证密钥
-        verifySecretKey(secretKey)
-          .then(isValid => {
-            if (isValid) {
-              // 生成新的会话token
-              const newSessionToken = generateSessionToken();
-              res.setHeader('x-session-token', newSessionToken);
-              next();
-            } else {
-              res.status(403).json({ error: '密钥无效' });
-            }
-          })
-          .catch(err => {
-            console.error('密钥验证失败:', err);
-            res.status(500).json({ error: '密钥验证失败' });
-          });
+      // 检查请求方法，如果是GET请求（首次加载），需要验证
+      // 如果是其他请求（修改操作），不需要验证
+      if (req.method === 'GET') {
+        // 检查请求头中的会话token
+        const sessionToken = req.headers['x-session-token'];
+        const secretKey = req.headers['x-secret-key'];
+        
+        if (sessionToken && isValidSessionToken(sessionToken)) {
+          // 有效的会话token，允许通过
+          next();
+        } else if (secretKey) {
+          // 验证密钥
+          verifySecretKey(secretKey)
+            .then(isValid => {
+              if (isValid) {
+                // 生成新的会话token
+                const newSessionToken = generateSessionToken();
+                res.setHeader('x-session-token', newSessionToken);
+                next();
+              } else {
+                res.status(403).json({ error: '密钥无效' });
+              }
+            })
+            .catch(err => {
+              console.error('密钥验证失败:', err);
+              res.status(500).json({ error: '密钥验证失败' });
+            });
+        } else {
+          res.status(401).json({ error: '需要密钥认证' });
+        }
       } else {
-        res.status(401).json({ error: '需要密钥认证' });
+        // 对于非GET请求（POST、PUT、DELETE等修改操作），直接允许通过
+        next();
       }
     })
     .catch(err => {

@@ -28,10 +28,10 @@ class ApiService {
             }
             
             const data = await response.json();
-            
-            if (!response.ok) {
-                // 如果是认证失败，触发重新认证
-                if (response.status === 401 || response.status === 403) {
+              if (!response.ok) {
+                // 如果是认证失败且是GET请求（首次加载），触发重新认证
+                // 对于其他请求方法（如POST、PUT、DELETE等修改操作），不需要重新认证
+                if ((response.status === 401 || response.status === 403) && options.method === 'GET') {
                     if (window.secretKeyManager) {
                         window.secretKeyManager.clearSession();
                         window.secretKeyManager.showAuthModal();

@@ -82,9 +82,7 @@ class SecretKeyManager {
             this.showAuthModal();
         }
         return false;
-    }
-
-    // 检查认证状态，如果未认证则显示认证界面
+    }    // 检查认证状态，如果未认证则显示认证界面
     async checkAuthenticationForAction(callback) {
         try {
             // 如果没有设置密钥，允许操作（初始化阶段）
@@ -95,33 +93,12 @@ class SecretKeyManager {
                 }
             }
             
-            // 检查会话是否有效
-            if (this.sessionToken) {
-                try {
-                    const response = await fetch('/api/items', {
-                        headers: {
-                            'x-session-token': this.sessionToken
-                        }
-                    });
-                    
-                    if (response.ok) {
-                        // 会话有效，执行回调
-                        return callback();
-                    } else {
-                        // 会话无效，清除token并显示认证界面
-                        this.clearSession();
-                    }
-                } catch (error) {
-                    console.error('检查认证失败:', error);
-                    this.clearSession();
-                }
-            }
-            
-            // 显示认证界面，成功后执行回调
-            this.showAuthModalWithCallback(callback);
+            // 修改操作不需要认证，直接执行回调
+            // 根据需求：修改操作不需要认证，只有首次加载需要认证
+            return callback();
         } catch (error) {
             console.error('认证检查失败:', error);
-            this.showAuthModalWithCallback(callback);
+            return callback(); // 即使出错也允许执行
         }
     }
 

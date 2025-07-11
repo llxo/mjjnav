@@ -6,7 +6,7 @@ const path = require('path');
 const { db, initDatabase } = require('./db/init');
 
 const app = express();
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 721;
 
 // 中间件
 app.use(cors());
