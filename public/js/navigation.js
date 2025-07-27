@@ -63,7 +63,7 @@ class NavigationService {
             iconContainer.addEventListener('wheel', (e) => {
                 if (e.deltaY !== 0) {
                     e.preventDefault(); // 阻止默认垂直滚动
-                    const scrollAmount = e.deltaY > 0 ? 120 : -120; // 根据滚动方向确定滚动量
+                    const scrollAmount = e.deltaY > 0 ? 160 : -160; // 根据滚动方向确定滚动量
                     iconContainer.scrollBy({
                         left: scrollAmount,
                         behavior: 'smooth'

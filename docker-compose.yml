@@ -3,7 +3,9 @@ version: '3.8'
 
 services:
   nav-app:
+    image: nav:1.5
     build: .
+    container_name: nav
     ports:
       - "721:721"  # 将容器内部721端口映射到主机721端口
     volumes:
