@@ -63,13 +63,7 @@ class NavigationService {
         if (this.cancelBtn) {
             this.cancelBtn.addEventListener('click', () => this.closeModal());
         }
-        
-        if (this.modal) {
-            this.modal.addEventListener('click', (e) => {
-                if (e.target === this.modal) {
-                    this.closeModal();
-                }
-            });
+          if (this.modal) {
         }
         
         if (this.cardForm) {

@@ -26,14 +26,7 @@ class CustomConfirm {
 
         if (this.confirmBtn) {
             this.confirmBtn.addEventListener('click', () => this.handleConfirm());
-        }
-
-        if (this.overlay) {
-            this.overlay.addEventListener('click', (e) => {
-                if (e.target === this.overlay) {
-                    this.handleCancel();
-                }
-            });
+        }        if (this.overlay) {
         }
 
         // ESC 键关闭对话框

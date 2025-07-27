@@ -57,13 +57,8 @@ class CountdownService {
         if (this.cancelCountdownBtn) {
             this.cancelCountdownBtn.addEventListener('click', () => this.closeModal());
         }
-        
+          // 点击模态框外部区域不关闭
         if (this.countdownModal) {
-            this.countdownModal.addEventListener('click', (e) => {
-                if (e.target === this.countdownModal) {
-                    this.closeModal();
-                }
-            });
         }
         
         if (this.countdownForm) {
