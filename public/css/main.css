@@ -281,9 +281,9 @@
     pointer-events: auto;
 }
 
-/* ...existing code...
-
-.secret-auth-modal .modal-dialog {
+/* 移动设备响应式样式 */
+@media (max-width: 640px) {
+    .secret-auth-modal .modal-dialog {
         width: 95%;
         margin: 1rem auto;
     }
