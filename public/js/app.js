@@ -127,6 +127,42 @@ app.init();
 // 将应用实例暴露到全局作用域（用于调试）
 window.app = app;
 
+// 初始化图标容器的拖拽滚动功能
+document.addEventListener('DOMContentLoaded', () => {
+    const iconExamples = document.getElementById('icon-examples');
+    if (iconExamples) {
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+        
+        iconExamples.addEventListener('mousedown', (e) => {
+            isDown = true;
+            iconExamples.classList.add('grabbing');
+            startX = e.pageX - iconExamples.offsetLeft;
+            scrollLeft = iconExamples.scrollLeft;
+            e.preventDefault();
+        });
+        
+        iconExamples.addEventListener('mouseleave', () => {
+            isDown = false;
+            iconExamples.classList.remove('grabbing');
+        });
+        
+        iconExamples.addEventListener('mouseup', () => {
+            isDown = false;
+            iconExamples.classList.remove('grabbing');
+        });
+        
+        iconExamples.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - iconExamples.offsetLeft;
+            const walk = (x - startX) * 1.5; // 滚动速度倍数
+            iconExamples.scrollLeft = scrollLeft - walk;
+        });
+    }
+});
+
 // 页面卸载时清理资源
 window.addEventListener('beforeunload', () => {
     app.destroy();

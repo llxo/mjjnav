@@ -49,15 +49,27 @@ class NavigationService {
         this.cardUrlInput = document.getElementById('card-url');
         this.cardIconInput = document.getElementById('card-icon');
         this.iconPreview = document.getElementById('icon-preview');
-    }
-
-    setupEventListeners() {
+    }    setupEventListeners() {
         if (this.addCardBtn) {
             this.addCardBtn.addEventListener('click', () => this.openAddModal());
         }
         
         if (this.closeModalBtn) {
             this.closeModalBtn.addEventListener('click', () => this.closeModal());
+        }
+          // 添加鼠标滚轮事件来水平滚动图标列表
+        const iconContainer = document.getElementById('icon-examples');
+        if (iconContainer) {
+            iconContainer.addEventListener('wheel', (e) => {
+                if (e.deltaY !== 0) {
+                    e.preventDefault(); // 阻止默认垂直滚动
+                    const scrollAmount = e.deltaY > 0 ? 120 : -120; // 根据滚动方向确定滚动量
+                    iconContainer.scrollBy({
+                        left: scrollAmount,
+                        behavior: 'smooth'
+                    });
+                }
+            }, { passive: false }); // passive: false 允许阻止默认行为
         }
         
         if (this.cancelBtn) {
@@ -74,9 +86,7 @@ class NavigationService {
         
         if (this.cardIconInput) {
             this.cardIconInput.addEventListener('input', () => this.updateIconPreview());
-        }
-
-        // 示例图标点击事件
+        }        // 示例图标点击事件
         document.addEventListener('click', (e) => {
             if (e.target.closest('.icon-example-btn')) {
                 const iconBtn = e.target.closest('.icon-example-btn');
@@ -85,10 +95,14 @@ class NavigationService {
                     this.cardIconInput.value = iconClass;
                     this.updateIconPreview();
                 }
+            }            // 处理图标左右滚动
+            if (e.target.closest('#scroll-icons-left')) {
+                this.scrollIcons('left');
             }
-        });
-
-        // ESC键关闭模态框
+            if (e.target.closest('#scroll-icons-right')) {
+                this.scrollIcons('right');
+            }
+        });        // ESC键关闭模态框
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 this.closeModal();
@@ -313,6 +327,26 @@ class NavigationService {
         if (!this.iconPreview || !this.cardIconInput) return;
         const iconValue = this.cardIconInput.value.trim() || 'fas fa-link';
         this.iconPreview.innerHTML = `<i class="${iconValue}"></i>`;
+    }    scrollIcons(direction) {
+        const iconsContainer = document.getElementById('icon-examples');
+        if (!iconsContainer) return;
+        
+        const iconWidth = 40; // 图标按钮宽度 + 间距
+        const visibleIcons = Math.floor(iconsContainer.offsetWidth / iconWidth);
+        const scrollAmount = iconWidth * Math.max(4, Math.floor(visibleIcons / 1.5)); // 一次滚动更多图标
+        const currentScrollLeft = iconsContainer.scrollLeft;
+        
+        if (direction === 'left') {
+            iconsContainer.scrollTo({
+                left: Math.max(0, currentScrollLeft - scrollAmount),
+                behavior: 'smooth'
+            });
+        } else if (direction === 'right') {
+            iconsContainer.scrollTo({
+                left: currentScrollLeft + scrollAmount,
+                behavior: 'smooth'
+            });
+        }
     }
 
     showLoading() {

@@ -510,3 +510,26 @@
         padding: 10px 16px;
     }
 }
+
+/* 图标滚动样式 */
+#icon-examples {
+    overflow-x: auto;
+    scrollbar-width: none; /* 隐藏Firefox滚动条 */
+    -ms-overflow-style: none; /* 隐藏IE/Edge滚动条 */
+    scroll-behavior: smooth;
+    cursor: grab; /* 指示可以水平拖动的光标 */
+    -webkit-overflow-scrolling: touch; /* 在iOS上平滑滚动 */
+}
+
+#icon-examples.grabbing {
+    cursor: grabbing !important; /* 拖动时的光标 */
+    user-select: none; /* 防止拖动时选中文本 */
+}
+
+#icon-examples:active {
+    cursor: grabbing; /* 拖动时的光标 */
+}
+
+#icon-examples::-webkit-scrollbar {
+    display: none; /* 隐藏Chrome/Safari/Opera滚动条 */
+}

@@ -36,35 +36,186 @@
                         </div>
                     </div>
                     <p class="text-xs text-muted-light dark:text-muted-dark mt-1">留空将使用默认图标 (fas fa-link)</p>
-                    
-                    <!-- 示例图标选择器 -->
+                      <!-- 示例图标选择器 -->
                     <div class="mt-3">
-                        <p class="text-xs font-medium text-text-light dark:text-text-dark mb-2">常用图标:</p>
-                        <div id="icon-examples" class="grid grid-cols-8 gap-2">
-                            <button type="button" class="icon-example-btn w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-link">
-                                <i class="fas fa-link text-sm"></i>
-                            </button>
-                            <button type="button" class="icon-example-btn w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-server">
-                                <i class="fas fa-server text-sm"></i>
-                            </button>
-                            <button type="button" class="icon-example-btn w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-database">
-                                <i class="fas fa-database text-sm"></i>
-                            </button>
-                            <button type="button" class="icon-example-btn w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-terminal">
-                                <i class="fas fa-terminal text-sm"></i>
-                            </button>
-                            <button type="button" class="icon-example-btn w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-code">
-                                <i class="fas fa-code text-sm"></i>
-                            </button>
-                            <button type="button" class="icon-example-btn w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-cloud">
-                                <i class="fas fa-cloud text-sm"></i>
-                            </button>
-                            <button type="button" class="icon-example-btn w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-cog">
-                                <i class="fas fa-cog text-sm"></i>
-                            </button>
-                            <button type="button" class="icon-example-btn w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-tools">
-                                <i class="fas fa-tools text-sm"></i>
-                            </button>
+                        <div class="flex justify-between items-center mb-2">
+                            <p class="text-xs font-medium text-text-light dark:text-text-dark">常用图标:</p>
+                            <div class="flex space-x-1">
+                                <button type="button" id="scroll-icons-left" class="w-6 h-6 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-text-light dark:text-text-dark">
+                                    <i class="fas fa-chevron-left text-xs"></i>
+                                </button>
+                                <button type="button" id="scroll-icons-right" class="w-6 h-6 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-text-light dark:text-text-dark">
+                                    <i class="fas fa-chevron-right text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="relative overflow-hidden">
+                            <div id="icon-examples" class="flex gap-2 transition-transform duration-300 ease-in-out">
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-link">
+                                    <i class="fas fa-link text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-server">
+                                    <i class="fas fa-server text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-database">
+                                    <i class="fas fa-database text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-terminal">
+                                    <i class="fas fa-terminal text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-code">
+                                    <i class="fas fa-code text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-cloud">
+                                    <i class="fas fa-cloud text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-cog">
+                                    <i class="fas fa-cog text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-tools">
+                                    <i class="fas fa-tools text-sm"></i>
+                                </button>
+                                <!-- 添加更多图标 -->
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-file">
+                                    <i class="fas fa-file text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-home">
+                                    <i class="fas fa-home text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-user">
+                                    <i class="fas fa-user text-sm"></i>
+                                </button>                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-chart-bar">
+                                    <i class="fas fa-chart-bar text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-globe">
+                                    <i class="fas fa-globe text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-clock">
+                                    <i class="fas fa-clock text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-calendar">
+                                    <i class="fas fa-calendar text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-envelope">
+                                    <i class="fas fa-envelope text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-shopping-cart">
+                                    <i class="fas fa-shopping-cart text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-heart">
+                                    <i class="fas fa-heart text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-star">
+                                    <i class="fas fa-star text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-image">
+                                    <i class="fas fa-image text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-video">
+                                    <i class="fas fa-video text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-music">
+                                    <i class="fas fa-music text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-book">
+                                    <i class="fas fa-book text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-bookmark">
+                                    <i class="fas fa-bookmark text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-flag">
+                                    <i class="fas fa-flag text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-map-marker-alt">
+                                    <i class="fas fa-map-marker-alt text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-phone">
+                                    <i class="fas fa-phone text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-bell">
+                                    <i class="fas fa-bell text-sm"></i>
+                                </button>                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-camera">
+                                    <i class="fas fa-camera text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-gamepad">
+                                    <i class="fas fa-gamepad text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-desktop">
+                                    <i class="fas fa-desktop text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-mobile-alt">
+                                    <i class="fas fa-mobile-alt text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-wifi">
+                                    <i class="fas fa-wifi text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-search">
+                                    <i class="fas fa-search text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-shield-alt">
+                                    <i class="fas fa-shield-alt text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-lock">
+                                    <i class="fas fa-lock text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-key">
+                                    <i class="fas fa-key text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-download">
+                                    <i class="fas fa-download text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-upload">
+                                    <i class="fas fa-upload text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-comments">
+                                    <i class="fas fa-comments text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-comment">
+                                    <i class="fas fa-comment text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fas fa-paper-plane">
+                                    <i class="fas fa-paper-plane text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fab fa-github">
+                                    <i class="fab fa-github text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fab fa-gitlab">
+                                    <i class="fab fa-gitlab text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fab fa-bitbucket">
+                                    <i class="fab fa-bitbucket text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fab fa-slack">
+                                    <i class="fab fa-slack text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fab fa-discord">
+                                    <i class="fab fa-discord text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fab fa-weixin">
+                                    <i class="fab fa-weixin text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fab fa-weibo">
+                                    <i class="fab fa-weibo text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fab fa-qq">
+                                    <i class="fab fa-qq text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fab fa-twitter">
+                                    <i class="fab fa-twitter text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fab fa-facebook">
+                                    <i class="fab fa-facebook text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fab fa-instagram">
+                                    <i class="fab fa-instagram text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fab fa-youtube">
+                                    <i class="fab fa-youtube text-sm"></i>
+                                </button>
+                                <button type="button" class="icon-example-btn w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-primary-light/20 dark:hover:bg-primary-dark/30 transition-colors" data-icon="fab fa-bilibili">
+                                    <i class="fab fa-bilibili text-sm"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
