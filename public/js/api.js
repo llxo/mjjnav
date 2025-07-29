@@ -49,8 +49,8 @@ class ApiService {
     }
 
     // 导航项相关API
-    async getItems() {
-        return this.call('/items');
+    async getItems(archived = false) {
+        return this.call(`/items?archived=${archived}`);
     }
 
     async createItem(data) {
@@ -98,6 +98,14 @@ class ApiService {
     async deleteCountdownEvent(id) {
         return this.call(`/countdown/${id}`, {
             method: 'DELETE'
+        });
+    }
+
+    // 归档相关API
+    async updateItemArchiveStatus(id, isArchived) {
+        return this.call(`/items/${id}/archive`, {
+            method: 'PUT',
+            body: JSON.stringify({ is_archived: isArchived })
         });
     }
 }

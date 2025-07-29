@@ -25,6 +25,12 @@
     }
 }
 
+/* 标题文本样式 */
+.service-heading {
+    margin-top: 10px;  /* 减少与header的间距 */
+    font-weight: 500;
+}
+
 /* 卡片抓取手柄样式 */
 .card-container {
     position: relative;
@@ -533,3 +539,19 @@
 #icon-examples::-webkit-scrollbar {
     display: none; /* 隐藏Chrome/Safari/Opera滚动条 */
 }
+
+/* 归档指示器样式 */
+#archive-indicator {
+    pointer-events: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    font-weight: bold;
+    font-size: 1.25rem;
+    letter-spacing: 0.5px;
+}
+
+#archive-indicator.active {
+    background-color: rgb(16, 185, 129) !important; /* 绿色 */
+    transform: translateY(0) scale(1.05) !important;
+}
+
+/* 拖拽相关样式 */

@@ -6,14 +6,17 @@ const router = express.Router();
 
 // 获取所有导航项
 router.get('/', (req, res) => {
+  const archived = req.query.archived === 'true';
+  
   const query = `
     SELECT n.*, c.name as category_name 
     FROM navigation_items n 
     LEFT JOIN categories c ON n.category_id = c.id
+    WHERE n.is_archived = ?
     ORDER BY n.sort_order ASC, n.created_at DESC
   `;
 
-  db.all(query, [], (err, rows) => {
+  db.all(query, [archived ? 1 : 0], (err, rows) => {
     if (err) {
       return res.status(500).json({ error: '获取导航项失败' });
     }
@@ -87,6 +90,30 @@ router.put('/reorder', sessionAuthenticate, (req, res) => {
       );
     });
   });
+});
+
+// 更新导航项归档状态
+router.put('/:id/archive', sessionAuthenticate, (req, res) => {
+  const { id } = req.params;
+  const { is_archived } = req.body;
+
+  if (is_archived === undefined) {
+    return res.status(400).json({ error: '归档状态不能为空' });
+  }
+
+  db.run(
+    'UPDATE navigation_items SET is_archived = ? WHERE id = ?',
+    [is_archived ? 1 : 0, id],
+    function(err) {
+      if (err) {
+        return res.status(500).json({ error: '更新归档状态失败' });
+      }
+      if (this.changes === 0) {
+        return res.status(404).json({ error: '导航项不存在' });
+      }
+      res.json({ message: '归档状态更新成功' });
+    }
+  );
 });
 
 // 更新导航项

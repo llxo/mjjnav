@@ -49,6 +49,21 @@
         }
     </script>
     
+    <!-- 确保页面加载时立即应用主题，防止闪烁 -->
+    <script>
+        // 在 DOM 加载前应用主题，避免闪烁
+        (function() {
+            const isDark = localStorage.getItem('theme') === 'dark' || 
+                (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+    
     <!-- 自定义样式 -->
     <link rel="stylesheet" href="css/main.css">
 </head>
@@ -72,11 +87,9 @@
                     </svg>
                 </button>
             </div>
-        </header>
-
-        <!-- 主内容区域 -->
-        <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-            <p class="text-center text-muted-light dark:text-muted-dark mb-8 sm:mb-12 text-lg">
+        </header>        <!-- 主内容区域 -->
+        <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+            <p class="text-center text-muted-light dark:text-muted-dark mb-6 sm:mb-8 text-lg service-heading fade-in fade-in-delay-0">
                 快速访问我的常用服务
             </p>
 

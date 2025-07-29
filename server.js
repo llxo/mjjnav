@@ -29,6 +29,11 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// 归档页面路由
+app.get('/archive', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'archive.html'));
+});
+
 // 验证必要的环境变量
 function validateEnvironment() {
   if (!process.env.JWT_SECRET) {

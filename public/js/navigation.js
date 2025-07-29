@@ -72,6 +72,14 @@ class NavigationService {
             }, { passive: false }); // passive: false 允许阻止默认行为
         }
         
+        // 添加右键菜单事件 - 在空白处右键时跳转到归档页面
+        document.addEventListener('contextmenu', (e) => {            // 如果点击的不是卡片，且没有打开任何模态框，则跳转到归档页面
+            if (!e.target.closest('.card-container') && !document.querySelector('.modal:not(.hidden)')) {
+                e.preventDefault();
+                window.location.href = '/archive';
+            }
+        });
+        
         if (this.cancelBtn) {
             this.cancelBtn.addEventListener('click', () => this.closeModal());
         }
@@ -108,12 +116,10 @@ class NavigationService {
                 this.closeModal();
             }
         });
-    }
-
-    async loadItems() {
+    }    async loadItems(archived = false) {
         try {
             this.showLoading();
-            this.items = await apiService.getItems();
+            this.items = await apiService.getItems(archived);
             this.renderItems();
         } catch (error) {
             console.error('加载导航项失败:', error);
@@ -368,8 +374,37 @@ class NavigationService {
     hideEmptyState() {
         if (this.emptyState) this.emptyState.classList.add('hidden');
         if (this.cardGrid) this.cardGrid.classList.remove('hidden');
+    }    createArchiveIndicator() {
+        // 如果已存在则移除
+        const existingIndicator = document.getElementById('archive-indicator');
+        if (existingIndicator) {
+            existingIndicator.remove();
+        }
+        
+        // 创建归档区域指示器
+        const archiveIndicator = document.createElement('div');
+        archiveIndicator.id = 'archive-indicator';
+        archiveIndicator.className = 'fixed top-0 left-0 w-full bg-primary-light dark:bg-primary-dark bg-opacity-80 dark:bg-opacity-80 text-white text-center py-4 z-50 transform -translate-y-full transition-transform duration-300';
+        archiveIndicator.innerHTML = '<i class="fas fa-archive mr-2"></i>拖放至此归档';
+        
+        document.body.appendChild(archiveIndicator);
+    }    showArchiveIndicator() {
+        const indicator = document.getElementById('archive-indicator');
+        if (indicator) {
+            indicator.classList.add('translate-y-0');
+            indicator.classList.remove('-translate-y-full');
+        }
     }
-
+    
+    hideArchiveIndicator() {
+        const indicator = document.getElementById('archive-indicator');
+        if (indicator) {
+            indicator.classList.remove('translate-y-0');
+            indicator.classList.add('-translate-y-full');
+            indicator.classList.remove('active');
+        }
+    }
+    
     setupSortable() {
         if (!this.cardGrid || typeof Sortable === 'undefined') return;
         
@@ -378,26 +413,66 @@ class NavigationService {
             this.sortableInstance.destroy();
         }
         
+        // 创建归档区域指示器
+        this.createArchiveIndicator();
+        
         this.sortableInstance = new Sortable(this.cardGrid, {
             animation: 150,
             ghostClass: 'sortable-ghost',
             dragClass: 'sortable-drag',
             handle: '.card-grab-handle',
-            onStart: () => {
+            onStart: (evt) => {
                 document.querySelectorAll('.edit-card-btn').forEach(btn => {
                     btn.style.display = 'none';
                 });
+                // 显示归档区域指示器
+                this.showArchiveIndicator();
+                this.draggedItemId = evt.item.dataset.id;
+            },
+            onMove: (evt) => {
+                // 检测是否拖到了屏幕上方（距离顶部小于 80px）
+                const mouseY = evt.originalEvent.clientY;
+                const archiveIndicator = document.getElementById('archive-indicator');
+                
+                if (mouseY < 80) {
+                    archiveIndicator.classList.add('active');
+                } else {
+                    archiveIndicator.classList.remove('active');
+                }
+                
+                return true; // 允许移动
             },
             onEnd: async (evt) => {
                 document.querySelectorAll('.edit-card-btn').forEach(btn => {
                     btn.style.display = '';
                 });
                 
-                if (evt.oldIndex !== evt.newIndex) {
+                // 隐藏归档区域指示器
+                this.hideArchiveIndicator();
+                
+                // 判断是否要归档（鼠标释放位置是否在屏幕上方）
+                const mouseY = evt.originalEvent.clientY;
+                if (mouseY < 80 && this.draggedItemId) {
+                    // 归档该项目
+                    const item = this.items.find(item => item.id == this.draggedItemId);
+                    if (item) {
+                        try {
+                            await apiService.updateItemArchiveStatus(item.id, true);
+                            NotificationService.success('已将 ' + item.title + ' 归档');
+                            // 重新加载列表
+                            await this.loadItems();
+                        } catch (error) {
+                            console.error('归档失败:', error);
+                        }
+                    }
+                } else if (evt.oldIndex !== evt.newIndex) {
+                    // 正常的排序变动
                     const movedItem = this.items.splice(evt.oldIndex, 1)[0];
                     this.items.splice(evt.newIndex, 0, movedItem);
                     await this.updateSortOrder();
                 }
+                
+                this.draggedItemId = null;
             }
         });
     }

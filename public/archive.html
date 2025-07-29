@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>归档导航 - 个人导航页</title>
+    <meta name="description" content="个人导航归档页，整理和管理您的所有归档链接">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="https://i.mji.rip/2025/07/10/3231018971323de88dd95f0252f74103.png" type="image/png">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Tailwind 自定义配置 -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': {
+                            light: '#3b82f6', // 蓝色
+                            dark: '#60a5fa'   // 浅蓝色
+                        },
+                        'background': {
+                            light: '#f8fafc', // 非常浅的灰色
+                            dark: '#0f172a'   // 深色背景
+                        },
+                        'card': {
+                            light: '#ffffff', // 白色卡片
+                            dark: '#1e293b'  // 深色卡片
+                        },
+                        'text': {
+                            light: '#1f2937', // 浅色文本
+                            dark: '#e2e8f0'  // 深色文本
+                        },
+                        'muted': {
+                            light: '#6b7280', // 浅色次要文本
+                            dark: '#94a3b8'  // 深色次要文本
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- 确保页面加载时立即应用主题 -->
+    <script>
+        // 在 DOM 加载前应用主题，避免闪烁
+        (function() {
+            const isDark = localStorage.getItem('theme') === 'dark' || 
+                (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })();
+    </script>
+    
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/archive.css">
+</head>
+<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark transition-colors duration-300">
+    <div class="flex flex-col min-h-screen">
+        <!-- 头部区域 -->
+        <header class="py-6 px-4 sm:px-6 lg:px-8">
+            <div class="container mx-auto flex justify-between items-center">
+                <div class="flex items-center space-x-4">                    <h1 class="text-2xl sm:text-3xl font-bold text-primary-light dark:text-primary-dark">
+                        <i class="fas fa-archive mr-3"></i>
+                        归档导航
+                    </h1>
+                </div>
+                <div class="flex space-x-3">
+                    <a href="/" class="inline-flex items-center px-4 py-2 rounded-lg bg-primary-light dark:bg-primary-dark hover:bg-primary-light/90 dark:hover:bg-primary-dark/90 text-white transition-colors">
+                        <i class="fas fa-home mr-2"></i>
+                        <span>返回首页</span>
+                    </a>
+                    <button id="theme-toggle" type="button"
+                    class="text-muted-light dark:text-muted-dark hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 transition-all duration-200 hover:scale-110">
+                    <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                    </svg>
+                    <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 5.05a1 1 0 00-1.414 1.414l.707.707a1 1 0 001.414-1.414l-.707-.707zm1.414 10.607a1 1 0 010-1.414l.707-.707a1 1 0 111.414 1.414l-.707.707a1 1 0 01-1.414 0zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+            </div>            </div>
+        </header>        <!-- 主内容区域 -->
+        <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+            <p class="text-center text-muted-light dark:text-muted-dark mb-6 sm:mb-8 text-lg service-heading fade-in fade-in-delay-0">
+                管理您的归档链接
+            </p>
+            <!-- 加载指示器 -->
+            <div id="loading-indicator" class="flex justify-center items-center py-20">
+                <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-light dark:border-primary-dark"></div>
+            </div>
+            
+            <!-- 空状态 -->
+            <div id="empty-state" class="hidden flex flex-col items-center justify-center py-20">
+                <div class="text-6xl text-gray-300 dark:text-gray-700 mb-4">
+                    <i class="fas fa-archive"></i>
+                </div>
+                <h3 class="text-xl font-medium text-gray-500 dark:text-gray-400 mb-2">没有归档的导航项</h3>
+                <p class="text-gray-400 dark:text-gray-500">将导航项拖动到屏幕上方可将其归档</p>
+            </div>
+            
+            <!-- 卡片网格 -->
+            <div id="card-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                <!-- 归档卡片将在这里动态生成 -->
+            </div>
+        </main>
+
+        <!-- 页脚 -->
+        <footer class="mt-auto py-6 px-4 sm:px-6 lg:px-8 border-t border-gray-200 dark:border-gray-700/50">
+            <div class="container mx-auto text-center text-sm text-muted-light dark:text-muted-dark">
+                我喜欢你
+            </div>
+        </footer>
+    </div>
+    
+    <!-- 右键菜单 -->
+    <div id="context-menu" class="hidden absolute z-50 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div class="py-1">
+            <button id="unarchive-item" class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center">
+                <i class="fas fa-box-open mr-2 w-5"></i>
+                <span>取消归档</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
+    <script src="/js/utils.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/notification.js"></script>
+    <script src="/js/confirm.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/secret.js"></script>
+    <script src="/js/archive.js"></script>
+</body>
+</html>

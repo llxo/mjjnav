@@ -33,6 +33,7 @@ function initDatabase() {
         category_id INTEGER,
         icon TEXT,
         sort_order INTEGER DEFAULT 0,
+        is_archived BOOLEAN DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (category_id) REFERENCES categories(id)
       )`);
@@ -43,7 +44,15 @@ function initDatabase() {
         if (err && !err.message.includes('duplicate column name')) {
           console.warn('添加 sort_order 字段时出现警告:', err.message);
         }
-      });      // 创建倒计时事件表
+      });
+      
+      // 添加 is_archived 字段（如果不存在）
+      db.run(`ALTER TABLE navigation_items ADD COLUMN is_archived BOOLEAN DEFAULT 0`, (err) => {
+        // 忽略字段已存在的错误
+        if (err && !err.message.includes('duplicate column name')) {
+          console.warn('添加 is_archived 字段时出现警告:', err.message);
+        }
+      });// 创建倒计时事件表
       db.run(`CREATE TABLE IF NOT EXISTS countdown_events (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         title TEXT NOT NULL,
