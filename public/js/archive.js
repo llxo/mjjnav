@@ -71,12 +71,10 @@ class ArchiveService {
         } finally {
             this.hideLoading();
         }
-    }
-
-    renderItems() {
+    }    renderItems() {
         if (!this.cardGrid) return;
         
-        if (this.items.length === 0) {
+        if (!this.items || this.items.length === 0) {
             this.showEmptyState();
             return;
         }
@@ -184,8 +182,7 @@ class ArchiveService {
             console.error('取消归档失败:', error);
             NotificationService.error('取消归档失败: ' + (error.message || '未知错误'));
         }
-    }
-      async doUnarchiveItem() {
+    }      async doUnarchiveItem() {
         try {
             if (!this.selectedItem) {
                 throw new Error('未选择要取消归档的项目');
@@ -196,6 +193,11 @@ class ArchiveService {
             NotificationService.success('已将 ' + itemTitle + ' 取消归档');
             this.hideContextMenu();
             await this.loadItems();
+            
+            // 如果没有归档项，确保显示空状态
+            if (this.items.length === 0) {
+                this.showEmptyState();
+            }
         } catch (error) {
             console.error('取消归档错误详情:', error);
             NotificationService.error('取消归档失败: ' + (error.message || '未知错误'));
@@ -206,11 +208,14 @@ class ArchiveService {
         if (this.loadingIndicator) this.loadingIndicator.classList.remove('hidden');
         if (this.cardGrid) this.cardGrid.classList.add('hidden');
         if (this.emptyState) this.emptyState.classList.add('hidden');
-    }
-
-    hideLoading() {
+    }    hideLoading() {
         if (this.loadingIndicator) this.loadingIndicator.classList.add('hidden');
-        if (this.cardGrid) this.cardGrid.classList.remove('hidden');
+        // 只有在有归档项时才显示卡片网格，否则显示空状态
+        if (this.items && this.items.length > 0) {
+            this.hideEmptyState();
+        } else {
+            this.showEmptyState();
+        }
     }
 
     showEmptyState() {

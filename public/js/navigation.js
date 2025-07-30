@@ -25,12 +25,66 @@ class NavigationService {
         this.cardUrlInput = null;
         this.cardIconInput = null;
         this.iconPreview = null;
+        
+        // 尝试尽早加载DOM元素和导航项
+        this._tryEarlyInit();
+    }
+    
+    _tryEarlyInit() {
+        // 如果DOM已经加载完成，立即初始化DOM元素和加载导航项
+        if (document.readyState !== 'loading') {
+            this._earlyInitDOMElements();
+            this._earlyLoadItems();
+        } else {
+            // 否则等待DOM内容加载完成再初始化
+            document.addEventListener('DOMContentLoaded', () => {
+                this._earlyInitDOMElements();
+                this._earlyLoadItems();
+            });
+        }
+    }
+    
+    _earlyInitDOMElements() {
+        // 只初始化显示导航项所必需的DOM元素
+        this.cardGrid = document.getElementById('card-grid');
+        this.loadingIndicator = document.getElementById('loading-indicator');
+        this.emptyState = document.getElementById('empty-state');
+    }
+    
+    async _earlyLoadItems() {
+        try {
+            // 如果ApiService已经可用，使用它来加载导航项
+            if (window.apiService) {
+                this.showLoading();
+                this.items = await window.apiService.getItems(false);
+                this.renderItems();
+            } else {
+                // 否则直接使用fetch API加载导航项
+                this.showLoading();
+                const response = await fetch('/api/items');
+                if (response.ok) {
+                    this.items = await response.json();
+                    this.renderItems();
+                }
+            }
+        } catch (error) {
+            console.error('提前加载导航项失败:', error);
+            // 错误处理会在完整初始化时再次尝试
+        } finally {
+            this.hideLoading();
+        }
     }
 
     init() {
         this.initDOMElements();
         this.setupEventListeners();
-        this.loadItems();
+        // 如果尚未加载导航项，才进行加载
+        if (this.items.length === 0) {
+            this.loadItems();
+        } else {
+            // 如果已经加载，只需要设置排序功能
+            this.setupSortable();
+        }
     }    initDOMElements() {
         this.cardGrid = document.getElementById('card-grid');
         this.loadingIndicator = document.getElementById('loading-indicator');
@@ -127,12 +181,10 @@ class NavigationService {
         } finally {
             this.hideLoading();
         }
-    }
-
-    renderItems() {
+    }    renderItems() {
         if (!this.cardGrid) return;
         
-        if (this.items.length === 0) {
+        if (!this.items || this.items.length === 0) {
             this.showEmptyState();
             return;
         }
@@ -264,9 +316,7 @@ class NavigationService {
         if (this.cardForm) this.cardForm.reset();
         if (this.cardIdInput) this.cardIdInput.value = '';
         this.updateIconPreview();
-    }
-
-    async handleFormSubmit(e) {
+    }    async handleFormSubmit(e) {
         e.preventDefault();
         
         if (!this.cardTitleInput || !this.cardDescriptionInput || !this.cardUrlInput) {
@@ -288,15 +338,30 @@ class NavigationService {
         
         try {
             if (this.isEditMode) {
-                await apiService.updateItem(this.currentEditId, formData);
+                // 更新服务器上的数据
+                const updatedItem = await apiService.updateItem(this.currentEditId, formData);
+                // 更新本地数据
+                const itemIndex = this.items.findIndex(item => item.id === this.currentEditId);
+                if (itemIndex !== -1) {
+                    this.items[itemIndex] = { ...this.items[itemIndex], ...formData };
+                    // 立即更新UI
+                    this.updateCardElement(this.items[itemIndex]);
+                }
                 NotificationService.success('卡片更新成功');
-            } else {
-                await apiService.createItem(formData);
+            } else {                // 创建新卡片
+                const newItem = await apiService.createItem(formData);
+                // 添加到本地数据
+                if (newItem && newItem.id) {
+                    // 将服务器返回的对象添加到数组
+                    this.items.push(newItem);
+                    // 立即更新UI
+                    // 使用完整渲染来确保DOM中包含正确的ID和URL
+                    this.renderItems();
+                }
                 NotificationService.success('卡片创建成功');
             }
             
             this.closeModal();
-            await this.loadItems();
         } catch (error) {
             // 错误已在apiService中处理
         }
@@ -322,7 +387,28 @@ class NavigationService {
             await apiService.deleteItem(this.currentEditId);
             NotificationService.success('卡片删除成功');
             this.closeModal();
-            await this.loadItems();
+            
+            // 从本地数据中移除
+            const itemIndex = this.items.findIndex(item => item.id === this.currentEditId);
+            if (itemIndex !== -1) {
+                this.items.splice(itemIndex, 1);
+                
+                // 从DOM中移除
+                const cardElement = this.cardGrid.querySelector(`.card-container[data-id="${this.currentEditId}"]`);
+                if (cardElement) {
+                    // 添加淡出动画
+                    cardElement.classList.add('fade-out');
+                    // 等待动画完成后移除元素
+                    setTimeout(() => {
+                        cardElement.remove();
+                        
+                        // 如果没有导航项，显示空状态
+                        if (this.items.length === 0) {
+                            this.showEmptyState();
+                        }
+                    }, 300);
+                }
+            }
         } catch (error) {
             console.error('Delete error:', error);
             NotificationService.error('删除失败: ' + error.message);
@@ -359,11 +445,14 @@ class NavigationService {
         if (this.loadingIndicator) this.loadingIndicator.classList.remove('hidden');
         if (this.cardGrid) this.cardGrid.classList.add('hidden');
         if (this.emptyState) this.emptyState.classList.add('hidden');
-    }
-
-    hideLoading() {
+    }    hideLoading() {
         if (this.loadingIndicator) this.loadingIndicator.classList.add('hidden');
-        if (this.cardGrid) this.cardGrid.classList.remove('hidden');
+        // 只有在有导航项时才显示卡片网格，否则显示空状态
+        if (this.items && this.items.length > 0) {
+            this.hideEmptyState();
+        } else {
+            this.showEmptyState();
+        }
     }
 
     showEmptyState() {
@@ -441,8 +530,7 @@ class NavigationService {
                 }
                 
                 return true; // 允许移动
-            },
-            onEnd: async (evt) => {
+            },                onEnd: async (evt) => {
                 document.querySelectorAll('.edit-card-btn').forEach(btn => {
                     btn.style.display = '';
                 });
@@ -454,13 +542,30 @@ class NavigationService {
                 const mouseY = evt.originalEvent.clientY;
                 if (mouseY < 80 && this.draggedItemId) {
                     // 归档该项目
-                    const item = this.items.find(item => item.id == this.draggedItemId);
-                    if (item) {
+                    const itemIndex = this.items.findIndex(item => item.id == this.draggedItemId);
+                    if (itemIndex !== -1) {
+                        const item = this.items[itemIndex];
                         try {
                             await apiService.updateItemArchiveStatus(item.id, true);
                             NotificationService.success('已将 ' + item.title + ' 归档');
-                            // 重新加载列表
-                            await this.loadItems();
+                            
+                            // 从本地数据中移除
+                            this.items.splice(itemIndex, 1);
+                            
+                            // 从DOM中移除
+                            const cardElement = this.cardGrid.querySelector(`.card-container[data-id="${item.id}"]`);
+                            if (cardElement) {
+                                // 添加淡出动画
+                                cardElement.classList.add('fade-out');
+                                // 等待动画完成后移除元素
+                                setTimeout(() => {
+                                    cardElement.remove();
+                                    // 检查是否已经没有卡片了
+                                    if (this.items.length === 0) {
+                                        this.showEmptyState();
+                                    }
+                                }, 300);
+                            }
                         } catch (error) {
                             console.error('归档失败:', error);
                         }
@@ -491,6 +596,28 @@ class NavigationService {
             NotificationService.error('排序保存失败');
             await this.loadItems();
         }
+    }
+
+    updateCardElement(item) {
+        if (!this.cardGrid) return;
+        
+        // 查找对应卡片的DOM元素
+        const cardElement = this.cardGrid.querySelector(`.card-container[data-id="${item.id}"]`);
+        if (!cardElement) return;
+        
+        // 更新卡片内容
+        const titleElement = cardElement.querySelector('h3');
+        const descriptionElement = cardElement.querySelector('p');
+        const iconElement = cardElement.querySelector('.flex-shrink-0 i');
+        const linkElement = cardElement.querySelector('a');
+        
+        if (titleElement) titleElement.textContent = item.title;
+        if (descriptionElement) descriptionElement.textContent = item.description;
+        if (iconElement) {
+            iconElement.className = '';
+            iconElement.className = `${item.icon || 'fas fa-link'} w-8 h-8`;
+        }
+        if (linkElement) linkElement.href = item.url;
     }
 }
 

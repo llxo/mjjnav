@@ -141,43 +141,67 @@
         </footer>
     </div>    <!-- 包含模态框 -->
     <div id="modals-container"></div>
-
-    <!-- 加载模态框然后初始化应用 -->
+    
+    <!-- 核心脚本提前加载 -->
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/navigation.js"></script>
+    
+    <!-- 创建API服务实例 -->
     <script>
-        // 先加载模态框HTML，然后再加载JavaScript模块
-        fetch('modals.html')
-            .then(response => response.text())
-            .then(html => {
-                document.getElementById('modals-container').innerHTML = html;
-                  // 模态框加载完成后，动态加载JavaScript模块                
-                  const scripts = [
-                    'js/utils.js',
-                    'js/notification.js',
-                    'js/api.js',
-                    'js/secret.js',
-                    'js/theme.js',
-                    'js/confirm.js',
-                    'js/navigation.js',
-                    'js/countdown.js',
-                    'js/app.js'
-                ];
-                
-                // 顺序加载脚本
-                function loadScript(index) {
-                    if (index >= scripts.length) return;
+        // 提前初始化API服务，方便导航服务调用
+        window.apiService = new ApiService();
+    </script>
+
+    <!-- 加载模态框和其他非关键脚本 -->
+    <script>
+        // 先加载关键的导航数据，再加载模态框和其他脚本
+        function loadRemainingResources() {
+            // 加载模态框HTML
+            fetch('modals.html')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('modals-container').innerHTML = html;
                     
-                    const script = document.createElement('script');
-                    script.src = scripts[index];
-                    script.onload = () => loadScript(index + 1);
-                    script.onerror = (error) => console.error('Failed to load script:', scripts[index], error);
-                    document.head.appendChild(script);
-                }
-                
-                loadScript(0);
-            })
-            .catch(error => {
-                console.error('Failed to load modals:', error);
-            });
+                    // 并行加载剩余的非关键JavaScript模块
+                    const remainingScripts = [
+                        'js/notification.js',
+                        'js/secret.js',
+                        'js/theme.js',
+                        'js/confirm.js',
+                        'js/countdown.js',
+                        'js/app.js'
+                    ];
+                    
+                    // 并行加载所有剩余脚本
+                    const scriptPromises = remainingScripts.map(src => {
+                        return new Promise((resolve, reject) => {
+                            const script = document.createElement('script');
+                            script.src = src;
+                            script.onload = resolve;
+                            script.onerror = reject;
+                            document.head.appendChild(script);
+                        });
+                    });
+                    
+                    // 所有脚本加载完成后初始化应用
+                    Promise.allSettled(scriptPromises).then(() => {
+                        console.log('所有脚本加载完成');
+                    }).catch(error => {
+                        console.error('某些脚本加载失败:', error);
+                    });
+                })
+                .catch(error => {
+                    console.error('加载模态框失败:', error);
+                });
+        }
+        
+        // 如果文档已加载完成，立即执行；否则等待DOMContentLoaded事件
+        if (document.readyState !== 'loading') {
+            loadRemainingResources();
+        } else {
+            document.addEventListener('DOMContentLoaded', loadRemainingResources);
+        }
     </script>
 </body>
 </html>

@@ -6,6 +6,22 @@
     animation: fadeIn 0.6s ease-in-out forwards;
 }
 
+/* 淡出动画 */
+.fade-out {
+    animation: fadeOut 0.3s ease-in-out forwards;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+    }
+}
+
 .fade-in-delay-0 { animation-delay: 0ms; }
 .fade-in-delay-1 { animation-delay: 100ms; }
 .fade-in-delay-2 { animation-delay: 200ms; }

@@ -2,7 +2,41 @@
 class ApiService {
     constructor() {
         this.baseURL = '/api';
-    }    async call(url, options = {}) {
+        
+        // 在实例化时尝试加载导航项，以提高页面加载速度
+        this._prefetchItems();
+    }
+
+    _prefetchItems() {
+        // 提前获取导航项数据并缓存
+        this.itemsCache = fetch(this.baseURL + '/items')
+            .then(response => response.json())
+            .catch(error => {
+                console.error('预加载导航项失败:', error);
+                return []; // 失败时返回空数组
+            });
+    }
+    
+    // 获取导航项的简化方法，优先使用缓存
+    async getItems(archived = false) {
+        try {
+            if (archived) {
+                // 对于归档项，仍然需要正常请求
+                return await this.call(`/items?archived=true`, { method: 'GET' });
+            } else if (this.itemsCache) {
+                // 对于首页导航项，优先使用缓存
+                return await this.itemsCache;
+            } else {
+                // 如果没有缓存，则正常请求
+                return await this.call('/items', { method: 'GET' });
+            }
+        } catch (error) {
+            console.error('获取导航项失败:', error);
+            throw error;
+        }
+    }
+
+    async call(url, options = {}) {
         try {
             // 添加会话token到请求头
             const headers = {
@@ -46,18 +80,21 @@ class ApiService {
             NotificationService.show('操作失败: ' + error.message, 'error');
             throw error;
         }
-    }
-
-    // 导航项相关API
-    async getItems(archived = false) {
-        return this.call(`/items?archived=${archived}`);
-    }
-
+    }    // 导航项相关API
     async createItem(data) {
-        return this.call('/items', {
+        const result = await this.call('/items', {
             method: 'POST',
             body: JSON.stringify(data)
         });
+        // 后端只返回id和消息，我们需要构造完整的导航项对象
+        if (result && result.id) {
+            // 将提交的数据和返回的ID合并为一个完整的对象
+            return { 
+                ...data,
+                id: result.id 
+            };
+        }
+        return result;
     }
 
     async updateItem(id, data) {

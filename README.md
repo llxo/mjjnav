@@ -83,6 +83,17 @@
    ```
 
 ### Docker 部署
+一键部署,务必修改JWT_SECRET的值
+```
+docker run -d --name nav \
+  -p 721:721 \
+  -v $(pwd)/data:/app/data \
+  -e NODE_ENV=production \
+  -e DOCKER_ENV=true \
+  -e JWT_SECRET=your_secure_jwt_secret_here \
+  --restart unless-stopped \
+  lxsoyo/nav:latest
+```
 
 #### 使用 Docker Compose（推荐）
 
