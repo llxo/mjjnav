@@ -3,7 +3,7 @@
 /* 自定义动画 */
 .fade-in {
     opacity: 0;
-    animation: fadeIn 0.6s ease-in-out forwards;
+    animation: fadeIn 0.4s ease-in-out forwards;
 }
 
 /* 淡出动画 */

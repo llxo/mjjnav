@@ -1,4 +1,4 @@
-# 服务器导航 🚀
+# MJJNAV 🚀
 
 一个基于 Node.js + SQLite 的现代化服务器导航页面，支持书签管理、倒计时功能和用户身份验证。
 
@@ -52,7 +52,7 @@
 
 1. **克隆仓库**
    ```bash
-   git clone https://github.com/llxo/nav.git
+   git clone https://github.com/llxo/mjjnav.git
    cd nav
    ```
 
@@ -67,7 +67,9 @@
    ```
 
 4. **设置环境变量**
+
    根据.env.example新建一个.env
+   
    并配置JWT_SECRET
 
 5. **访问应用**
@@ -84,27 +86,49 @@
 
 ### Docker 部署
 一键部署,务必修改JWT_SECRET的值
-```
-docker run -d --name nav \
+```bash
+docker run -d --name mjjnav \
   -p 721:721 \
   -v $(pwd)/data:/app/data \
   -e NODE_ENV=production \
   -e DOCKER_ENV=true \
   -e JWT_SECRET=your_secure_jwt_secret_here \
   --restart unless-stopped \
-  lxsoyo/nav:latest
+  lxsoyo/mjjnav:latest
 ```
 
 #### 使用 Docker Compose（推荐）
 
-1. **克隆仓库**
-   ```bash
-   git clone https://github.com/llxo/nav.git
-   cd nav
+1. **docker compose**
+   ```yaml
+   version: '3.8'
+   services:
+   nav-app:
+      image: lxsoyo/mjjnav:latest
+      build: .
+      container_name: mjjnav
+      ports:
+         - "721:721"
+      volumes:
+         - ./data:/app/data
+      environment:
+         - NODE_ENV=production
+         - DOCKER_ENV=true
+      env_file:
+         - .env
+      restart: unless-stopped
+      healthcheck:
+         test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:721/"]
+         interval: 30s
+         timeout: 10s
+         retries: 3
+         start_period: 40s
    ```
 
 2. **设置环境变量**
+
    根据.env.example新建一个.env
+   
    配置JWT_SECRET
 
 3. **启动docker**
