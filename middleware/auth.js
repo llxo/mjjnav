@@ -201,6 +201,63 @@ function isValidSessionToken(token) {
   return true;
 }
 
+// 会话令牌验证
+function validateSessionToken(req, res, next) {
+  const sessionToken = req.headers['x-session-token'];
+  
+  if (!sessionToken) {
+    return res.status(401).json({ error: '需要会话令牌' });
+  }
+  
+  if (!isValidSessionToken(sessionToken)) {
+    return res.status(403).json({ error: '会话令牌无效或已过期' });
+  }
+  
+  next();
+}
+
+// 通用密钥认证中间件，适用于API请求
+function requireAuth(req, res, next) {
+  hasSecretKey()
+    .then(exists => {
+      if (!exists) {
+        // 如果未设置密钥，允许通过
+        return next();
+      }
+      
+      // 检查会话令牌
+      const sessionToken = req.headers['x-session-token'];
+      if (sessionToken && isValidSessionToken(sessionToken)) {
+        return next();
+      }
+      
+      // 检查密钥
+      const secretKey = req.headers['x-secret-key'];
+      if (secretKey) {
+        verifySecretKey(secretKey)
+          .then(isValid => {
+            if (isValid) {
+              // 生成新的会话令牌
+              const newToken = generateSessionToken();
+              res.setHeader('x-session-token', newToken);
+              return next();
+            }
+            return res.status(403).json({ error: '密钥无效' });
+          })
+          .catch(err => {
+            console.error('密钥验证失败:', err);
+            return res.status(500).json({ error: '验证失败' });
+          });
+      } else {
+        return res.status(401).json({ error: '需要认证' });
+      }
+    })
+    .catch(err => {
+      console.error('认证检查失败:', err);
+      return res.status(500).json({ error: '认证检查失败' });
+    });
+}
+
 // 清理过期的会话token
 setInterval(() => {
   const now = Date.now();
@@ -219,5 +276,7 @@ module.exports = {
   setSecretKey,
   verifySecretKey,
   sessionAuthenticate,
-  generateSessionToken
+  generateSessionToken,
+  validateSessionToken,
+  requireAuth
 };

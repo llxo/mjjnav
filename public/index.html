@@ -109,12 +109,10 @@
                 <i class="fas fa-plus-circle text-muted-light dark:text-muted-dark text-4xl mb-4"></i>
                 <h3 class="text-lg font-semibold text-text-light dark:text-text-dark mb-2">还没有任何导航项</h3>
                 <p class="text-muted-light dark:text-muted-dark mb-4">点击右下角的"添加卡片"按钮来创建第一个导航项</p>
-            </div>
-
-            <!-- 添加卡片按钮 -->
-            <div class="fixed bottom-20 right-2 z-50 fade-in fade-in-delay-6">
+            </div>            <!-- 添加卡片按钮 -->
+            <div class="fixed bottom-32 right-2 z-50 fade-in fade-in-delay-6">
                 <button id="add-card-btn" class="bg-primary-light dark:bg-primary-dark text-white px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2">
-                    <i class="fas fa-plus"></i>
+                    <i class="fas fa-plus mr-1"></i>
                     <span>添加卡片</span>
                 </button>
             </div>
@@ -122,12 +120,17 @@
             <!-- 倒计时区域 -->
             <div id="countdown-container" class="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 mb-8 text-sm text-muted-light dark:text-muted-dark fade-in fade-in-delay-0 mt-3">
                 <!-- 动态加载的倒计时事件将显示在这里 -->
+            </div>              <!-- 密钥管理按钮 -->
+            <div class="fixed bottom-20 right-2 z-50 fade-in fade-in-delay-6">
+                <a href="/secret" class="bg-yellow-500 dark:bg-yellow-600 text-white px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2">
+                    <i class="fas fa-key mr-1"></i>
+                    <span>密钥管理</span>
+                </a>
             </div>
-            
-            <!-- 倒计时管理按钮 -->
-            <div class="fixed bottom-32 right-2 z-50 fade-in fade-in-delay-6">
-                <button id="manage-countdown-btn" class="bg-green-500 dark:bg-green-600 text-white px-3 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2 text-sm">
-                    <i class="far fa-calendar-alt"></i>
+              <!-- 倒计时管理按钮 -->
+            <div class="fixed bottom-44 right-2 z-50 fade-in fade-in-delay-6">
+                <button id="manage-countdown-btn" class="bg-green-500 dark:bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2">
+                    <i class="far fa-calendar-alt mr-1"></i>
                     <span>倒计时</span>
                 </button>
             </div>

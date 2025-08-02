@@ -476,12 +476,22 @@ class NavigationService {
         archiveIndicator.className = 'fixed top-0 left-0 w-full bg-primary-light dark:bg-primary-dark bg-opacity-80 dark:bg-opacity-80 text-white text-center py-4 z-50 transform -translate-y-full transition-transform duration-300';
         archiveIndicator.innerHTML = '<i class="fas fa-archive mr-2"></i>拖放至此归档';
         
+        // 确保一开始就不可见
+        archiveIndicator.style.visibility = 'hidden';
+        archiveIndicator.style.opacity = '0';
+        
         document.body.appendChild(archiveIndicator);
+        
+        // 添加一个小延迟后再设为可见，但保持隐藏状态，避免闪烁
+        setTimeout(() => {
+            archiveIndicator.style.visibility = 'visible';
+        }, 100);
     }    showArchiveIndicator() {
         const indicator = document.getElementById('archive-indicator');
         if (indicator) {
             indicator.classList.add('translate-y-0');
             indicator.classList.remove('-translate-y-full');
+            indicator.style.opacity = '1';
         }
     }
     
@@ -491,6 +501,7 @@ class NavigationService {
             indicator.classList.remove('translate-y-0');
             indicator.classList.add('-translate-y-full');
             indicator.classList.remove('active');
+            indicator.style.opacity = '0';
         }
     }
     

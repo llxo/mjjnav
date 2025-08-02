@@ -563,6 +563,14 @@
     font-weight: bold;
     font-size: 1.25rem;
     letter-spacing: 0.5px;
+    opacity: 0; /* 初始设置为透明 */
+    transition: transform 0.3s ease, opacity 0.2s ease; /* 添加透明度过渡效果 */
+    transform: translateY(-100%); /* 确保初始位置在屏幕外 */
+}
+
+#archive-indicator.translate-y-0 {
+    opacity: 1; /* 显示时设置为不透明 */
+    transform: translateY(0);
 }
 
 #archive-indicator.active {

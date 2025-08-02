@@ -145,6 +145,38 @@ class ApiService {
             body: JSON.stringify({ is_archived: isArchived })
         });
     }
+    
+    // 密钥管理相关API
+    async checkSecretKeyExists() {
+        return this.call('/secret/check');
+    }
+    
+    async verifySecretKey(secretKey) {
+        return this.call('/secret/verify', {
+            method: 'POST',
+            body: JSON.stringify({ secretKey })
+        });
+    }
+    
+    async setupSecretKey(secretKey) {
+        return this.call('/secret/setup', {
+            method: 'POST',
+            body: JSON.stringify({ secretKey })
+        });
+    }
+    
+    async changeSecretKey(currentSecretKey, newSecretKey) {
+        return this.call('/secret/change', {
+            method: 'POST',
+            body: JSON.stringify({ currentSecretKey, newSecretKey })
+        });
+    }
+    
+    async resetSecretKey() {
+        return this.call('/secret/reset', {
+            method: 'POST'
+        });
+    }
 }
 
 // 创建全局API服务实例

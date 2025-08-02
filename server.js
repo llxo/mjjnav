@@ -34,6 +34,11 @@ app.get('/archive', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'archive.html'));
 });
 
+// 密钥管理页面路由
+app.get('/secret', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'secret.html'));
+});
+
 // 验证必要的环境变量
 function validateEnvironment() {
   if (!process.env.JWT_SECRET) {
