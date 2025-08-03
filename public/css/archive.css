@@ -1,5 +1,10 @@
 /* 归档页面专用样式 */
 
+body {
+  /* Screen version */
+  font-family: "LXGW WenKai Screen", sans-serif;
+}
+
 /* 归档卡片样式 - 更小巧的设计 */
 .archive-card {
     transition: all 0.3s ease-in-out;

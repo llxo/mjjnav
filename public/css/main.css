@@ -1,5 +1,10 @@
 /* 主样式文件 */
 
+body {
+  /* Screen version */
+  font-family: "LXGW WenKai Screen", sans-serif;
+}
+
 /* 自定义动画 */
 .fade-in {
     opacity: 0;
