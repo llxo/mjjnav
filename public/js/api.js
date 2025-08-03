@@ -5,6 +5,8 @@ class ApiService {
         
         // 在实例化时尝试加载导航项，以提高页面加载速度
         this._prefetchItems();
+        // 在实例化时尝试加载倒计时事件
+        this._prefetchCountdownEvents();
     }
 
     _prefetchItems() {
@@ -13,6 +15,17 @@ class ApiService {
             .then(response => response.json())
             .catch(error => {
                 console.error('预加载导航项失败:', error);
+                return []; // 失败时返回空数组
+            });
+    }
+    
+    // 预加载倒计时事件
+    _prefetchCountdownEvents() {
+        // 提前获取倒计时事件数据并缓存
+        this.countdownEventsCache = fetch(this.baseURL + '/countdown')
+            .then(response => response.json())
+            .catch(error => {
+                console.error('预加载倒计时事件失败:', error);
                 return []; // 失败时返回空数组
             });
     }
@@ -113,12 +126,22 @@ class ApiService {
             method: 'PUT',
             body: JSON.stringify({ items })
         });
-    }
-
-    // 倒计时相关API
+    }    // 倒计时相关API
     async getCountdownEvents() {
-        return this.call('/countdown');
-    }    async createCountdownEvent(data) {
+        try {
+            if (this.countdownEventsCache) {
+                // 优先使用缓存
+                return await this.countdownEventsCache;
+            } else {
+                // 如果没有缓存，则正常请求
+                return await this.call('/countdown');
+            }
+        } catch (error) {
+            console.error('获取倒计时事件失败:', error);
+            // 出错时尝试直接调用API
+            return this.call('/countdown');
+        }
+    }async createCountdownEvent(data) {
         return this.call('/countdown', {
             method: 'POST',
             body: JSON.stringify(data)

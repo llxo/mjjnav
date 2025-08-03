@@ -21,12 +21,53 @@ class CountdownService {
         this.closeCountdownModalBtn = null;
         this.cancelCountdownBtn = null;
         this.deleteCountdownBtn = null;
+        
+        // 尝试早期初始化
+        this._tryEarlyInit();
+    }
+    
+    _tryEarlyInit() {
+        // 如果DOM已经加载完成，立即初始化倒计时容器并加载事件
+        if (document.readyState !== 'loading') {
+            this._earlyInitDOMElements();
+            this._earlyLoadEvents();
+        } else {
+            // 否则等待DOM内容加载完成再初始化
+            document.addEventListener('DOMContentLoaded', () => {
+                this._earlyInitDOMElements();
+                this._earlyLoadEvents();
+            });
+        }
+    }
+    
+    _earlyInitDOMElements() {
+        // 只初始化显示倒计时所必需的DOM元素
+        this.countdownContainer = document.getElementById('countdown-container');
+    }
+    
+    async _earlyLoadEvents() {
+        if (!this.countdownContainer) return;
+        
+        try {
+            // 如果ApiService已经可用，使用它来加载倒计时事件
+            if (window.apiService) {
+                console.log('提前加载倒计时事件...');
+                this.events = await window.apiService.getCountdownEvents();
+                this.renderEvents();
+            }
+        } catch (error) {
+            console.error('提前加载倒计时事件失败:', error);
+            // 错误处理会在完整初始化时再次尝试
+        }
     }
 
     init() {
         this.initDOMElements();
         this.setupEventListeners();
-        this.loadEvents();
+        // 只有在早期加载没有成功获取事件时才重新加载
+        if (!this.events || this.events.length === 0) {
+            this.loadEvents();
+        }
         this.startUpdateTimer();
     }
 
@@ -76,9 +117,7 @@ class CountdownService {
         if (this.countdownDateInput) {
             this.countdownDateInput.addEventListener('input', (e) => this.validateDateInput(e));
         }
-    }
-
-    async loadEvents() {
+    }    async loadEvents(retryCount = 0) {
         try {
             console.log('Loading countdown events...');
             this.events = await apiService.getCountdownEvents();
@@ -86,6 +125,18 @@ class CountdownService {
             this.renderEvents();
         } catch (error) {
             console.error('加载倒计时事件失败:', error);
+            // 最多重试2次
+            if (retryCount < 2) {
+                console.log(`尝试重新加载倒计时事件 (${retryCount + 1}/2)...`);
+                // 延迟500毫秒后重试
+                setTimeout(() => {
+                    this.loadEvents(retryCount + 1);
+                }, 500);
+            } else {
+                // 所有重试都失败，显示空状态
+                this.events = [];
+                this.renderEvents();
+            }
         }
     }
 
