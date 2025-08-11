@@ -6,6 +6,9 @@ class NavigationService {
         this.currentEditId = null;
         this.sortableInstance = null;
         
+        // 布局配置 (新增)
+        this.currentLayout = localStorage.getItem('preferredLayout') || 'cols-3';
+        
         // DOM 元素
         this.cardGrid = null;
         this.loadingIndicator = null;
@@ -43,12 +46,16 @@ class NavigationService {
             });
         }
     }
-    
-    _earlyInitDOMElements() {
+      _earlyInitDOMElements() {
         // 只初始化显示导航项所必需的DOM元素
         this.cardGrid = document.getElementById('card-grid');
         this.loadingIndicator = document.getElementById('loading-indicator');
         this.emptyState = document.getElementById('empty-state');
+        
+        // 提前应用布局设置
+        if (this.cardGrid) {
+            this.applyLayout(this.currentLayout);
+        }
     }
     
     async _earlyLoadItems() {
@@ -103,6 +110,9 @@ class NavigationService {
         this.cardUrlInput = document.getElementById('card-url');
         this.cardIconInput = document.getElementById('card-icon');
         this.iconPreview = document.getElementById('icon-preview');
+        
+        // 应用保存的布局设置
+        this.applyLayout(this.currentLayout);
     }    setupEventListeners() {
         if (this.addCardBtn) {
             this.addCardBtn.addEventListener('click', () => this.openAddModal());
@@ -111,7 +121,12 @@ class NavigationService {
         if (this.closeModalBtn) {
             this.closeModalBtn.addEventListener('click', () => this.closeModal());
         }
-          // 添加鼠标滚轮事件来水平滚动图标列表
+          // 布局切换按钮事件监听 (新增)
+        document.getElementById('layout-cols-3')?.addEventListener('click', () => this.changeLayout('cols-3'));
+        document.getElementById('layout-cols-4')?.addEventListener('click', () => this.changeLayout('cols-4'));
+        document.getElementById('layout-cols-5')?.addEventListener('click', () => this.changeLayout('cols-5'));
+          
+        // 添加鼠标滚轮事件来水平滚动图标列表
         const iconContainer = document.getElementById('icon-examples');
         if (iconContainer) {
             iconContainer.addEventListener('wheel', (e) => {
@@ -203,6 +218,9 @@ class NavigationService {
             card.classList.add('fade-in', `fade-in-delay-${Math.min(index + 1, 6)}`);
         });
         
+        // 确保应用正确的布局
+        this.applyLayout(this.currentLayout);
+        
         // 重新初始化排序功能
         this.setupSortable();
     }
@@ -216,18 +234,17 @@ class NavigationService {
             <div class="card-grab-handle">
                 <i class="fas fa-grip-vertical"></i>
             </div>
-            <div class="relative group">
-                <a href="${item.url}" target="_blank" rel="noopener noreferrer"
-                   class="group block bg-card-light dark:bg-card-dark rounded-xl shadow-sm hover:shadow-lg dark:hover:shadow-gray-700/50 border border-transparent hover:border-primary-light/30 dark:hover:border-primary-dark/30 p-6 pr-12 transition-all duration-300 transform hover:-translate-y-1">
-                    <div class="flex items-center space-x-4">
+            <div class="relative group">                <a href="${item.url}" target="_blank" rel="noopener noreferrer"
+                   class="group block bg-card-light dark:bg-card-dark rounded-xl shadow-sm hover:shadow-lg dark:hover:shadow-gray-700/50 border border-transparent hover:border-primary-light/30 dark:hover:border-primary-dark/30 p-6 pr-12 transition-all duration-300 transform hover:-translate-y-1 h-[100px] flex items-center">
+                    <div class="flex items-center space-x-4 w-full">
                         <div class="flex-shrink-0 text-primary-light dark:text-primary-dark text-2xl">
                             <i class="${item.icon || 'fas fa-link'} w-8 h-8"></i>
                         </div>
-                        <div class="flex-1">
+                        <div class="flex-1 flex flex-col">
                             <h3 class="text-lg font-semibold text-text-light dark:text-text-dark group-hover:text-primary-light dark:group-hover:text-primary-dark transition-colors">
                                 ${Utils.escapeHtml(item.title)}
                             </h3>
-                            <p class="text-sm text-muted-light dark:text-muted-dark mt-1">
+                            <p class="text-sm text-muted-light dark:text-muted-dark mt-1 card-description">
                                 ${Utils.escapeHtml(item.description)}
                             </p>
                         </div>
@@ -629,6 +646,62 @@ class NavigationService {
             iconElement.className = `${item.icon || 'fas fa-link'} w-8 h-8`;
         }
         if (linkElement) linkElement.href = item.url;
+    }
+    
+    // 布局切换函数 (新增)
+    changeLayout(layout) {
+        if (this.currentLayout === layout) return;
+        
+        this.currentLayout = layout;
+        localStorage.setItem('preferredLayout', layout);
+        this.applyLayout(layout);
+        
+        // 更新按钮状态
+        document.querySelectorAll('.layout-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.getElementById(`layout-${layout}`)?.classList.add('active');
+    }
+      // 应用布局到卡片网格 (新增)
+    applyLayout(layout) {
+        if (!this.cardGrid) return;
+        
+        // 保存当前应用的类
+        const currentClasses = this.cardGrid.className.split(' ');
+        
+        // 移除所有与列相关的类和布局类
+        const newClasses = currentClasses.filter(cls => 
+            !cls.includes('grid-cols') && !cls.includes('layout-cols-'));
+        
+        // 添加布局类名，用于CSS选择器
+        newClasses.push(`layout-${layout}`);
+          
+        // 添加新的列类
+        switch(layout) {
+            case 'cols-3':
+                newClasses.push('grid-cols-1', 'sm:grid-cols-2', 'md:grid-cols-3', 'lg:grid-cols-3');
+                break;
+            case 'cols-4':
+                newClasses.push('grid-cols-1', 'sm:grid-cols-2', 'md:grid-cols-3', 'lg:grid-cols-4');
+                break;
+            case 'cols-5':
+                newClasses.push('grid-cols-1', 'sm:grid-cols-2', 'md:grid-cols-3', 'lg:grid-cols-5');
+                break;
+            default:
+                newClasses.push('grid-cols-1', 'sm:grid-cols-2', 'lg:grid-cols-3');
+                break;
+        }
+        
+        // 更新卡片网格的类
+        this.cardGrid.className = newClasses.join(' ');
+        
+        // 在渲染后使用正确的按钮状态
+        setTimeout(() => {
+            document.querySelectorAll('.layout-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(`layout-${layout}`)?.classList.add('active');
+        }, 0);
     }
 }
 

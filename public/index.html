@@ -74,25 +74,35 @@
 <body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark transition-colors duration-300">
     <div class="flex flex-col min-h-screen">
         <!-- 头部区域 -->
-        <header class="py-6 px-4 sm:px-6 lg:px-8">
-            <div class="container mx-auto flex justify-between items-center">
+        <header class="py-6 px-4 sm:px-6 lg:px-8">            <div class="container mx-auto flex justify-between items-center">
                 <h1 class="text-2xl sm:text-3xl font-bold text-primary-light dark:text-primary-dark">
                     <i class="fas fa-server mr-2"></i>服务器导航
                 </h1>
-                <!-- 深色/浅色模式切换按钮 -->
-                <button id="theme-toggle" type="button"
-                    class="text-muted-light dark:text-muted-dark hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 transition-all duration-200 hover:scale-110">
-                    <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-                    </svg>
-                    <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 5.05a1 1 0 00-1.414 1.414l.707.707a1 1 0 001.414-1.414l-.707-.707zm1.414 10.607a1 1 0 010-1.414l.707-.707a1 1 0 111.414 1.414l-.707.707a1 1 0 01-1.414 0zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
-                    </svg>
-                </button>
+                <div class="flex items-center space-x-2">                <!-- 布局切换按钮组 -->                <div class="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1 mr-2">
+                        <button id="layout-cols-3" class="layout-btn active px-2 py-1 rounded-md text-sm font-medium transition-all" title="三列布局">
+                            3
+                        </button>
+                        <button id="layout-cols-4" class="layout-btn px-2 py-1 rounded-md text-sm font-medium transition-all" title="四列布局">
+                            4
+                        </button>
+                        <button id="layout-cols-5" class="layout-btn px-2 py-1 rounded-md text-sm font-medium transition-all" title="五列布局">
+                            5
+                        </button>
+                    </div>
+                    <!-- 深色/浅色模式切换按钮 -->
+                    <button id="theme-toggle" type="button"
+                        class="text-muted-light dark:text-muted-dark hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 transition-all duration-200 hover:scale-110">
+                        <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                        </svg>
+                        <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 5.05a1 1 0 00-1.414 1.414l.707.707a1 1 0 001.414-1.414l-.707-.707zm1.414 10.607a1 1 0 010-1.414l.707-.707a1 1 0 111.414 1.414l-.707.707a1 1 0 01-1.414 0zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                </div>
             </div>
         </header>        <!-- 主内容区域 -->
-        <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-            <p class="text-center text-muted-light dark:text-muted-dark mb-6 sm:mb-8 text-lg service-heading fade-in fade-in-delay-0">
+        <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">            <p class="text-center text-muted-light dark:text-muted-dark mb-6 sm:mb-8 text-lg service-heading fade-in fade-in-delay-0">
                 快速访问我的常用服务
             </p>
 

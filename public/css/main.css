@@ -57,6 +57,25 @@ body {
     position: relative;
 }
 
+/* 卡片描述文本省略号样式 */
+.card-description {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;  /* 限制为两行 */
+    line-clamp: 1;          /* 标准属性实现兼容性 */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 2.6em;  /* 约为两行文本的高度 */
+    line-height: 1.3;
+}
+
+/* 5列布局时描述限制为1行 */
+.layout-cols-5 .card-description {
+    -webkit-line-clamp: 1;  /* 限制为1行 */
+    line-clamp: 1;          /* 标准属性实现兼容性 */
+    max-height: 1.3em;      /* 一行文本的高度 */
+}
+
 .card-grab-handle {
     position: absolute;
     top: 8px;
@@ -90,6 +109,40 @@ body {
 
 .sortable-drag {
     transform: rotate(5deg);
+}
+
+/* 布局按钮样式 */
+.layout-btn {
+    color: var(--text-muted-color, #6b7280);
+    transition: all 0.2s ease-in-out;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.layout-btn:hover {
+    color: var(--text-color, #1f2937);
+}
+
+.layout-btn.active {
+    background-color: var(--primary-color, #3b82f6);
+    color: white;
+}
+
+/* 深色模式下布局按钮样式 */
+.dark .layout-btn {
+    color: var(--dark-text-muted-color, #94a3b8);
+}
+
+.dark .layout-btn:hover {
+    color: var(--dark-text-color, #e2e8f0);
+}
+
+.dark .layout-btn.active {
+    background-color: var(--dark-primary-color, #60a5fa);
+    color: white;
 }
 
 /* 通知样式 */
