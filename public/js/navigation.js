@@ -233,9 +233,8 @@ class NavigationService {
         cardContainer.innerHTML = `
             <div class="card-grab-handle">
                 <i class="fas fa-grip-vertical"></i>
-            </div>
-            <div class="relative group">                <a href="${item.url}" target="_blank" rel="noopener noreferrer"
-                   class="group block bg-card-light dark:bg-card-dark rounded-xl shadow-sm hover:shadow-lg dark:hover:shadow-gray-700/50 border border-transparent hover:border-primary-light/30 dark:hover:border-primary-dark/30 p-6 pr-12 transition-all duration-300 transform hover:-translate-y-1 h-[100px] flex items-center">
+            </div>            <div class="relative group">                <a href="${item.url}" target="_blank" rel="noopener noreferrer"
+                   class="group block bg-card-light dark:bg-card-dark rounded-xl shadow-sm hover:shadow-lg dark:hover:shadow-gray-700/50 border border-transparent hover:border-primary-light/30 dark:hover:border-primary-dark/30 p-6 pr-8 transition-all duration-300 transform hover:-translate-y-1 h-[100px] flex items-center">
                     <div class="flex items-center space-x-4 w-full">
                         <div class="flex-shrink-0 text-primary-light dark:text-primary-dark text-2xl">
                             <i class="${item.icon || 'fas fa-link'} w-8 h-8"></i>

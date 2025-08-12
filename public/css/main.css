@@ -57,23 +57,46 @@ body {
     position: relative;
 }
 
+/* 卡片链接内容样式优化 */
+.card-container a {
+    padding-right: 10px !important; /* 减少右侧内边距，为文本腾出更多空间 */
+}
+
+/* 修正卡片中的标题文本溢出问题 */
+.card-container a .flex-1 h3 {
+    width: calc(100% - 10px); /* 减少宽度以避免文本过早被截断 */
+    margin-right: 5px; /* 确保有一些右边距 */
+}
+
 /* 卡片描述文本省略号样式 */
 .card-description {
     display: -webkit-box;
-    -webkit-line-clamp: 2;  /* 限制为两行 */
+    -webkit-line-clamp: 1;  /* 限制为一行 */
     line-clamp: 1;          /* 标准属性实现兼容性 */
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-height: 2.6em;  /* 约为两行文本的高度 */
+    max-height: 1.3em;  /* 一行文本的高度 */
     line-height: 1.3;
 }
 
-/* 5列布局时描述限制为1行 */
-.layout-cols-5 .card-description {
-    -webkit-line-clamp: 1;  /* 限制为1行 */
-    line-clamp: 1;          /* 标准属性实现兼容性 */
-    max-height: 1.3em;      /* 一行文本的高度 */
+/* 卡片标题单行显示并自动省略号 */
+h3.text-lg {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    width: 100%;
+    padding-right: 10px; /* 减少右侧填充空间，让文本显示更多 */
+    box-sizing: border-box;
+    flex: 1;
+}
+
+.card-container a .flex-1 {
+    min-width: 0;
+    max-width: 100%; /* 使用全部可用宽度 */
+    padding-right: 10px; /* 添加内边距，确保文本不会太靠近右边缘 */
+    overflow: hidden;
 }
 
 .card-grab-handle {
