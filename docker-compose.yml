@@ -2,8 +2,8 @@
 version: '3.8'
 
 services:
-  nav-app:
-    image: mjjnav:1.2.2
+  mjjnav:
+    image: mjjnav:1.2.5
     build: .
     container_name: mjjnav
     ports:

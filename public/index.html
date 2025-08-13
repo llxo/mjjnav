@@ -1,23 +1,26 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>    <meta charset="UTF-8">
+
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>服务器导航</title>
-    
+
     <!-- Favicon -->
     <link rel="icon" href="https://i.mji.rip/2025/07/10/3231018971323de88dd95f0252f74103.png" type="image/png">
-    
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+
     <!-- SortableJS for drag and drop -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
     <!-- LXGW WenKai Screen -->
-    <link rel="stylesheet" href="https://npm.elemecdn.com/lxgw-wenkai-screen-webfont/style.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://npm.elemecdn.com/lxgw-wenkai-screen-webfont/style.css" media="print"
+        onload="this.media='all'">
 
     <!-- Tailwind 自定义配置 -->
     <script>
@@ -51,58 +54,71 @@
             }
         }
     </script>
-    
+
     <!-- 确保页面加载时立即应用主题，防止闪烁 -->
     <script>
-        // 在 DOM 加载前应用主题，避免闪烁
-        (function() {
-            const isDark = localStorage.getItem('theme') === 'dark' || 
-                (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
-            
-            if (isDark) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-        })();
+            // 在 DOM 加载前应用主题，避免闪烁
+            (function () {
+                const isDark = localStorage.getItem('theme') === 'dark' ||
+                    (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+                if (isDark) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            })();
     </script>
-    
+
     <!-- 自定义样式 -->
     <link rel="stylesheet" href="css/main.css">
 </head>
 
-<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark transition-colors duration-300">
+<body
+    class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark transition-colors duration-300">
     <div class="flex flex-col min-h-screen">
         <!-- 头部区域 -->
-        <header class="py-6 px-4 sm:px-6 lg:px-8">            <div class="container mx-auto flex justify-between items-center">
+        <header class="py-6 px-4 sm:px-6 lg:px-8">
+            <div class="container mx-auto flex justify-between items-center">
                 <h1 class="text-2xl sm:text-3xl font-bold text-primary-light dark:text-primary-dark">
                     <i class="fas fa-server mr-2"></i>服务器导航
                 </h1>
-                <div class="flex items-center space-x-2">                <!-- 布局切换按钮组 -->                <div class="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1 mr-2">
-                        <button id="layout-cols-3" class="layout-btn active px-2 py-1 rounded-md text-sm font-medium transition-all" title="三列布局">
+                <div class="flex items-center space-x-2"> <!-- 布局切换按钮组 -->
+                    <div class="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1 mr-2">
+                        <button id="layout-cols-3"
+                            class="layout-btn active px-2 py-1 rounded-md text-sm font-medium transition-all"
+                            title="三列布局">
                             3
                         </button>
-                        <button id="layout-cols-4" class="layout-btn px-2 py-1 rounded-md text-sm font-medium transition-all" title="四列布局">
+                        <button id="layout-cols-4"
+                            class="layout-btn px-2 py-1 rounded-md text-sm font-medium transition-all" title="四列布局">
                             4
                         </button>
-                        <button id="layout-cols-5" class="layout-btn px-2 py-1 rounded-md text-sm font-medium transition-all" title="五列布局">
+                        <button id="layout-cols-5"
+                            class="layout-btn px-2 py-1 rounded-md text-sm font-medium transition-all" title="五列布局">
                             5
                         </button>
                     </div>
                     <!-- 深色/浅色模式切换按钮 -->
                     <button id="theme-toggle" type="button"
                         class="text-muted-light dark:text-muted-dark hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 transition-all duration-200 hover:scale-110">
-                        <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg">
                             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
                         </svg>
-                        <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 5.05a1 1 0 00-1.414 1.414l.707.707a1 1 0 001.414-1.414l-.707-.707zm1.414 10.607a1 1 0 010-1.414l.707-.707a1 1 0 111.414 1.414l-.707.707a1 1 0 01-1.414 0zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path>
+                        <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 5.05a1 1 0 00-1.414 1.414l.707.707a1 1 0 001.414-1.414l-.707-.707zm1.414 10.607a1 1 0 010-1.414l.707-.707a1 1 0 111.414 1.414l-.707.707a1 1 0 01-1.414 0zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+                                fill-rule="evenodd" clip-rule="evenodd"></path>
                         </svg>
                     </button>
                 </div>
             </div>
-        </header>        <!-- 主内容区域 -->
-        <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">            <p class="text-center text-muted-light dark:text-muted-dark mb-6 sm:mb-8 text-lg service-heading fade-in fade-in-delay-0">
+        </header> <!-- 主内容区域 -->
+        <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+            <p
+                class="text-center text-muted-light dark:text-muted-dark mb-6 sm:mb-8 text-lg service-heading fade-in fade-in-delay-0">
                 快速访问我的常用服务
             </p>
 
@@ -110,39 +126,43 @@
             <div id="card-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                 <!-- 动态加载的卡片将显示在这里 -->
             </div>
-            
+
             <!-- 加载状态指示器 -->
             <div id="loading-indicator" class="text-center py-8">
                 <i class="fas fa-spinner fa-spin text-primary-light dark:text-primary-dark text-2xl mb-2"></i>
                 <p class="text-muted-light dark:text-muted-dark">正在加载导航项...</p>
             </div>
-            
+
             <!-- 空状态提示 -->
             <div id="empty-state" class="text-center py-12 hidden">
                 <i class="fas fa-plus-circle text-muted-light dark:text-muted-dark text-4xl mb-4"></i>
                 <h3 class="text-lg font-semibold text-text-light dark:text-text-dark mb-2">还没有任何导航项</h3>
                 <p class="text-muted-light dark:text-muted-dark mb-4">点击右下角的"添加卡片"按钮来创建第一个导航项</p>
-            </div>            <!-- 添加卡片按钮 -->
+            </div> <!-- 添加卡片按钮 -->
             <div class="fixed bottom-32 right-2 z-50 fade-in fade-in-delay-6">
-                <button id="add-card-btn" class="bg-primary-light dark:bg-primary-dark text-white px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2">
+                <button id="add-card-btn"
+                    class="bg-primary-light dark:bg-primary-dark text-white px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2">
                     <i class="fas fa-plus mr-1"></i>
                     <span>添加卡片</span>
                 </button>
             </div>
 
             <!-- 倒计时区域 -->
-            <div id="countdown-container" class="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 mb-8 text-sm text-muted-light dark:text-muted-dark fade-in fade-in-delay-0 mt-3">
+            <div id="countdown-container"
+                class="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 mb-8 text-sm text-muted-light dark:text-muted-dark fade-in fade-in-delay-0 mt-3">
                 <!-- 动态加载的倒计时事件将显示在这里 -->
-            </div>              <!-- 密钥管理按钮 -->
+            </div> <!-- 密钥管理按钮 -->
             <div class="fixed bottom-20 right-2 z-50 fade-in fade-in-delay-6">
-                <a href="/secret" class="bg-yellow-500 dark:bg-yellow-600 text-white px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2">
+                <a href="/secret"
+                    class="bg-yellow-500 dark:bg-yellow-600 text-white px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2">
                     <i class="fas fa-key mr-1"></i>
                     <span>密钥管理</span>
                 </a>
             </div>
-              <!-- 倒计时管理按钮 -->
+            <!-- 倒计时管理按钮 -->
             <div class="fixed bottom-44 right-2 z-50 fade-in fade-in-delay-6">
-                <button id="manage-countdown-btn" class="bg-green-500 dark:bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2">
+                <button id="manage-countdown-btn"
+                    class="bg-green-500 dark:bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center space-x-2">
                     <i class="far fa-calendar-alt mr-1"></i>
                     <span>倒计时</span>
                 </button>
@@ -155,14 +175,14 @@
                 我喜欢你
             </div>
         </footer>
-    </div>    <!-- 包含模态框 -->
+    </div> <!-- 包含模态框 -->
     <div id="modals-container"></div>
-    
+
     <!-- 核心脚本提前加载 -->
     <script src="js/utils.js"></script>
     <script src="js/api.js"></script>
     <script src="js/navigation.js"></script>
-    
+
     <!-- 创建API服务实例 -->
     <script>
         // 提前初始化API服务，方便导航服务调用
@@ -178,7 +198,7 @@
                 .then(response => response.text())
                 .then(html => {
                     document.getElementById('modals-container').innerHTML = html;
-                    
+
                     // 并行加载剩余的非关键JavaScript模块
                     const remainingScripts = [
                         'js/notification.js',
@@ -188,7 +208,7 @@
                         'js/countdown.js',
                         'js/app.js'
                     ];
-                    
+
                     // 并行加载所有剩余脚本
                     const scriptPromises = remainingScripts.map(src => {
                         return new Promise((resolve, reject) => {
@@ -199,7 +219,7 @@
                             document.head.appendChild(script);
                         });
                     });
-                    
+
                     // 所有脚本加载完成后初始化应用
                     Promise.allSettled(scriptPromises).then(() => {
                         console.log('所有脚本加载完成');
@@ -211,7 +231,7 @@
                     console.error('加载模态框失败:', error);
                 });
         }
-        
+
         // 如果文档已加载完成，立即执行；否则等待DOMContentLoaded事件
         if (document.readyState !== 'loading') {
             loadRemainingResources();
@@ -220,4 +240,5 @@
         }
     </script>
 </body>
+
 </html>
