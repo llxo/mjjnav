@@ -660,34 +660,32 @@ class NavigationService {
             btn.classList.remove('active');
         });
         document.getElementById(`layout-${layout}`)?.classList.add('active');
-    }
-      // 应用布局到卡片网格 (新增)
+    }    // 应用布局到卡片网格 (新增)
     applyLayout(layout) {
         if (!this.cardGrid) return;
         
         // 保存当前应用的类
         const currentClasses = this.cardGrid.className.split(' ');
         
-        // 移除所有与列相关的类和布局类
+        // 移除所有与列相关的类、布局类和间距类
         const newClasses = currentClasses.filter(cls => 
-            !cls.includes('grid-cols') && !cls.includes('layout-cols-'));
+            !cls.includes('grid-cols') && !cls.includes('layout-cols-') && !cls.includes('gap-'));
         
         // 添加布局类名，用于CSS选择器
         newClasses.push(`layout-${layout}`);
           
-        // 添加新的列类
+        // 添加新的列类和间距类
         switch(layout) {
             case 'cols-3':
-                newClasses.push('grid-cols-1', 'sm:grid-cols-2', 'md:grid-cols-3', 'lg:grid-cols-3');
-                break;
-            case 'cols-4':
-                newClasses.push('grid-cols-1', 'sm:grid-cols-2', 'md:grid-cols-3', 'lg:grid-cols-4');
+                newClasses.push('grid-cols-1', 'sm:grid-cols-2', 'md:grid-cols-3', 'lg:grid-cols-3', 'gap-6', 'lg:gap-8');
+                break;            case 'cols-4':
+                newClasses.push('grid-cols-1', 'sm:grid-cols-2', 'md:grid-cols-3', 'lg:grid-cols-4', 'gap-y-6', 'lg:gap-y-8', 'gap-x-6', 'lg:gap-x-5');
                 break;
             case 'cols-5':
-                newClasses.push('grid-cols-1', 'sm:grid-cols-2', 'md:grid-cols-3', 'lg:grid-cols-5');
+                newClasses.push('grid-cols-1', 'sm:grid-cols-2', 'md:grid-cols-3', 'lg:grid-cols-5', 'gap-y-6', 'lg:gap-y-8', 'gap-x-6', 'lg:gap-x-4');
                 break;
             default:
-                newClasses.push('grid-cols-1', 'sm:grid-cols-2', 'lg:grid-cols-3');
+                newClasses.push('grid-cols-1', 'sm:grid-cols-2', 'lg:grid-cols-3', 'gap-6', 'lg:gap-8');
                 break;
         }
         
