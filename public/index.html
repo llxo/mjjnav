@@ -76,7 +76,19 @@
 
 <body
     class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark transition-colors duration-300">
-    <div class="flex flex-col min-h-screen">
+    
+    <!-- 密钥验证遮罩层 - 默认显示，验证通过后隐藏 -->
+    <div id="auth-overlay" class="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center">
+        <div class="text-center text-white">
+            <i class="fas fa-lock text-6xl mb-4"></i>
+            <p class="text-xl mb-4">正在验证访问权限...</p>
+            <div class="spinner">
+                <i class="fas fa-spinner fa-spin text-2xl"></i>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-content" class="flex flex-col min-h-screen" style="display: none;">
         <!-- 头部区域 -->
         <header class="py-6 px-4 sm:px-6 lg:px-8">
             <div class="container mx-auto flex justify-between items-center">
@@ -175,13 +187,15 @@
                 我喜欢你
             </div>
         </footer>
-    </div> <!-- 包含模态框 -->
+    </div>
+
+    <!-- 包含模态框 -->
     <div id="modals-container"></div>
 
-    <!-- 核心脚本提前加载 -->
+    <!-- 密钥验证脚本 - 必须最先加载 -->
     <script src="js/utils.js"></script>
     <script src="js/api.js"></script>
-    <script src="js/navigation.js"></script>
+    <script src="js/secret.js"></script>
 
     <!-- 创建API服务实例 -->
     <script>
@@ -189,10 +203,101 @@
         window.apiService = new ApiService();
     </script>
 
-    <!-- 加载模态框和其他非关键脚本 -->
+    <!-- 在密钥验证通过后再加载其他资源 -->
     <script>
-        // 先加载关键的导航数据，再加载模态框和其他脚本
+        // 全局变量，控制是否已验证
+        window.isAuthenticated = false;
+        
+        // 等待密钥管理器初始化完成后再加载其他资源
+        function waitForAuthAndLoadResources() {
+            // 检查是否已通过验证
+            if (window.isAuthenticated) {
+                showMainContent();
+                loadRemainingResources();
+                return;
+            }
+            
+            // 如果密钥管理器存在，监听其状态
+            if (window.secretKeyManager) {
+                // 检查是否未设置密钥或已有有效token
+                if (!window.secretKeyManager.hasSecretKey || window.secretKeyManager.sessionToken) {
+                    // 进一步验证
+                    checkAuthenticationStatus();
+                } else {
+                    // 每200ms检查一次认证状态
+                    setTimeout(waitForAuthAndLoadResources, 200);
+                }
+            } else {
+                // 如果密钥管理器还未初始化，稍等后重试
+                setTimeout(waitForAuthAndLoadResources, 100);
+            }
+        }
+
+        // 检查认证状态
+        async function checkAuthenticationStatus() {
+            try {
+                if (!window.secretKeyManager.hasSecretKey) {
+                    // 未设置密钥，允许访问
+                    if (!window.isAuthenticated) {
+                        window.isAuthenticated = true;
+                        showMainContent();
+                        loadRemainingResources();
+                    }
+                } else if (window.secretKeyManager.sessionToken) {
+                    // 有token，验证是否有效
+                    try {
+                        const response = await fetch('/api/items', {
+                            headers: {
+                                'x-session-token': window.secretKeyManager.sessionToken
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            // token有效
+                            if (!window.isAuthenticated) {
+                                window.isAuthenticated = true;
+                                showMainContent();
+                                loadRemainingResources();
+                            }
+                        } else {
+                            // token无效，等待用户重新验证
+                            setTimeout(waitForAuthAndLoadResources, 500);
+                        }
+                    } catch (error) {
+                        console.error('验证token失败:', error);
+                        setTimeout(waitForAuthAndLoadResources, 500);
+                    }
+                } else {
+                    // 需要验证，等待用户输入
+                    setTimeout(waitForAuthAndLoadResources, 500);
+                }
+            } catch (error) {
+                console.error('检查认证状态失败:', error);
+                setTimeout(waitForAuthAndLoadResources, 500);
+            }
+        }
+
+        // 显示主要内容
+        function showMainContent() {
+            console.log('显示主要内容');
+            document.getElementById('auth-overlay').style.display = 'none';
+            document.getElementById('main-content').style.display = 'flex';
+        }
+        
+        // 将函数暴露到全局作用域
+        window.showMainContent = showMainContent;
+
+        // 加载剩余资源
         function loadRemainingResources() {
+            // 防止重复加载
+            if (window.resourcesLoaded) {
+                console.log('资源已经加载，跳过重复加载');
+                return;
+            }
+            
+            console.log('开始加载剩余资源');
+            window.resourcesLoaded = true;
+            
             // 加载模态框HTML
             fetch('modals.html')
                 .then(response => response.text())
@@ -201,17 +306,25 @@
 
                     // 并行加载剩余的非关键JavaScript模块
                     const remainingScripts = [
+                        'js/navigation.js',
                         'js/notification.js',
-                        'js/secret.js',
                         'js/theme.js',
                         'js/confirm.js',
                         'js/countdown.js',
                         'js/app.js'
                     ];
 
-                    // 并行加载所有剩余脚本
+                    // 并行加载所有剩余脚本，确保不重复加载
                     const scriptPromises = remainingScripts.map(src => {
                         return new Promise((resolve, reject) => {
+                            // 检查脚本是否已经存在
+                            const existingScript = document.querySelector(`script[src="${src}"]`);
+                            if (existingScript) {
+                                console.log(`脚本 ${src} 已存在，跳过加载`);
+                                resolve();
+                                return;
+                            }
+                            
                             const script = document.createElement('script');
                             script.src = src;
                             script.onload = resolve;
@@ -229,14 +342,18 @@
                 })
                 .catch(error => {
                     console.error('加载模态框失败:', error);
+                    window.resourcesLoaded = false; // 重置标志以允许重试
                 });
         }
+        
+        // 将函数暴露到全局作用域
+        window.loadRemainingResources = loadRemainingResources;
 
         // 如果文档已加载完成，立即执行；否则等待DOMContentLoaded事件
         if (document.readyState !== 'loading') {
-            loadRemainingResources();
+            waitForAuthAndLoadResources();
         } else {
-            document.addEventListener('DOMContentLoaded', loadRemainingResources);
+            document.addEventListener('DOMContentLoaded', waitForAuthAndLoadResources);
         }
     </script>
 </body>

@@ -1,10 +1,11 @@
 const express = require('express');
 const { db } = require('../db/init');
+const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
 // 获取所有倒计时事件
-router.get('/', (req, res) => {
+router.get('/', requireAuth, (req, res) => {
   const query = `
     SELECT * FROM countdown_events 
     WHERE is_active = 1 
@@ -20,7 +21,7 @@ router.get('/', (req, res) => {
 });
 
 // 创建新倒计时事件
-router.post('/', (req, res) => {
+router.post('/', requireAuth, (req, res) => {
   const { title, description, target_date, icon } = req.body;
 
   if (!title || !target_date) {
@@ -55,7 +56,7 @@ router.post('/', (req, res) => {
 });
 
 // 更新排序
-router.put('/reorder', (req, res) => {
+router.put('/reorder', requireAuth, (req, res) => {
   const { items } = req.body;
 
   if (!Array.isArray(items) || items.length === 0) {
@@ -93,7 +94,7 @@ router.put('/reorder', (req, res) => {
 });
 
 // 更新倒计时事件
-router.put('/:id', (req, res) => {
+router.put('/:id', requireAuth, (req, res) => {
   const { id } = req.params;
   const { title, description, target_date, icon } = req.body;
 
@@ -123,7 +124,7 @@ router.put('/:id', (req, res) => {
 });
 
 // 删除倒计时事件
-router.delete('/:id', (req, res) => {
+router.delete('/:id', requireAuth, (req, res) => {
   const { id } = req.params;
 
   db.run('UPDATE countdown_events SET is_active = 0 WHERE id = ?', [id], function(err) {
@@ -138,7 +139,7 @@ router.delete('/:id', (req, res) => {
 });
 
 // 切换倒计时事件状态
-router.patch('/:id/toggle', (req, res) => {
+router.patch('/:id/toggle', requireAuth, (req, res) => {
   const { id } = req.params;
 
   db.get('SELECT is_active FROM countdown_events WHERE id = ?', [id], (err, row) => {

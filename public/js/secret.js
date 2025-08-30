@@ -11,43 +11,57 @@ class SecretKeyManager {
             // 检查是否已设置密钥
             await this.checkSecretKeyExists();
             console.log('密钥存在检查完成，结果:', this.hasSecretKey);
-              // 如果没有设置密钥，强制显示设置界面
+              // 如果没有设置密钥，允许访问（首次设置）
             if (!this.hasSecretKey) {
-                console.log('强制显示密钥设置界面');
+                console.log('未设置密钥，允许首次访问进行设置');
+                this.markAsAuthenticated();
                 this.showSetupModal();
-                // 阻止页面其他功能的初始化
-                this.blockPageInteraction();
             } else {
                 console.log('密钥已设置，需要验证');
-                // 检查会话是否有效，无效则要求验证
+                // 检查会话是否有效
                 if (this.sessionToken) {
                     // 尝试验证当前会话token
-                    const isValid = await this.checkAuthentication();
+                    const isValid = await this.checkAuthentication(false);
                     if (isValid) {
                         console.log('会话有效，允许正常使用');
-                        this.unblockPageInteraction();
+                        this.markAsAuthenticated();
                     } else {
                         console.log('会话无效，需要重新验证');
-                        // 在这里不需要特别操作，因为checkAuthentication会自动显示验证界面
+                        this.showAuthModal();
                     }                } else {
                     console.log('无会话token，显示验证界面');
-                    // 显示验证界面并阻止页面交互
                     this.showAuthModal();
-                    this.blockPageInteraction();
                 }
             }
         } catch (error) {
             console.error('初始化密钥管理失败:', error);
-            // 出错时也强制显示设置界面
-            this.showSetupModal();
-            this.blockPageInteraction();
+            // 出错时也显示验证界面
+            this.showAuthModal();
+        }
+    }
+
+    // 标记为已认证
+    markAsAuthenticated() {
+        window.isAuthenticated = true;
+        // 触发主内容显示
+        this.triggerMainContentDisplay();
+    }
+
+    // 触发主内容显示
+    triggerMainContentDisplay() {
+        if (window.showMainContent && typeof window.showMainContent === 'function') {
+            window.showMainContent();
+        }
+        
+        // 如果有待加载的资源函数，也触发它
+        if (window.loadRemainingResources && typeof window.loadRemainingResources === 'function') {
+            window.loadRemainingResources();
         }
     }
 
     async checkSecretKeyExists() {
         try {
-            const response = await fetch('/api/secret/check');
-            const data = await response.json();
+            const data = await window.apiService.checkSecretKeyExists();
             this.hasSecretKey = data.hasSecretKey;
             return this.hasSecretKey;
         } catch (error) {
@@ -159,15 +173,7 @@ class SecretKeyManager {
         }
 
         try {
-            const response = await fetch('/api/secret/verify', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ secretKey })
-            });
-
-            const data = await response.json();
+            const { response, data } = await window.apiService.verifySecretKey(secretKey);
 
             if (response.ok) {
                 // 验证成功，保存会话token
@@ -189,9 +195,19 @@ class SecretKeyManager {
                     this.pendingCallback = null;
                 }
                 
+                // 标记为已认证
+                this.markAsAuthenticated();
+                
+                // 显示成功消息
                 if (window.NotificationService) {
-                    NotificationService.show('验证成功！', 'success');
+                    NotificationService.show('验证成功！正在刷新数据...', 'success');
                 }
+                
+                // 延迟500ms后刷新页面
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500);
+                
             } else {
                 this.showError(errorDiv, data.error || '验证失败');
             }
@@ -315,28 +331,36 @@ class SecretKeyManager {
         }
 
         try {
-            const response = await fetch('/api/secret/setup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ secretKey })
-            });
+            const { response, data } = await window.apiService.setupSecretKey(secretKey);
 
-            const data = await response.json();            if (response.ok) {
-                // 设置成功，移除模态框并验证
+            if (response.ok) {
+                // 设置成功，移除模态框
                 document.querySelector('.secret-setup-modal').remove();
                 this.hasSecretKey = true;
                 
-                // 解除页面阻止
-                this.unblockPageInteraction();
+                // 标记为已认证
+                this.markAsAuthenticated();
+                
+                // 显示成功消息
+                if (window.NotificationService) {
+                    NotificationService.show('密钥设置成功！正在初始化...', 'success');
+                }
                 
                 // 验证密钥并保存会话token
-                await this.verifySecretKey(secretKey);
-                
-                if (window.NotificationService) {
-                    NotificationService.show('密钥设置成功！', 'success');
+                const { response: verifyResponse } = await window.apiService.verifySecretKey(secretKey);
+                if (verifyResponse.ok) {
+                    const sessionToken = verifyResponse.headers.get('x-session-token');
+                    if (sessionToken) {
+                        localStorage.setItem('sessionToken', sessionToken);
+                        this.sessionToken = sessionToken;
+                    }
                 }
+                
+                // 延迟500ms后刷新页面
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500);
+                
             } else {
                 this.showError(errorDiv, data.error || '设置失败');
             }
@@ -362,15 +386,9 @@ class SecretKeyManager {
             this.showError(errorDiv, '验证失败，请重试');
         }
     }    async verifySecretKey(secretKey) {
-        const response = await fetch('/api/secret/verify', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ secretKey })
-        });
+        const { response, data } = await window.apiService.verifySecretKey(secretKey);
 
-        const data = await response.json();        if (response.ok) {
+        if (response.ok) {
             // 验证成功，保存会话token
             const sessionToken = response.headers.get('x-session-token');
             if (sessionToken) {
@@ -384,17 +402,19 @@ class SecretKeyManager {
                 modal.remove();
             }
             
-            // 解除页面阻止（如果存在）
-            this.unblockPageInteraction();
+            // 标记为已认证
+            this.markAsAuthenticated();
             
-            // 刷新页面数据
-            if (window.app && window.app.loadNavigationItems) {
-                window.app.loadNavigationItems();
-            }
-            
+            // 显示成功消息
             if (window.NotificationService) {
-                NotificationService.show('验证成功！', 'success');
+                NotificationService.show('验证成功！正在刷新数据...', 'success');
             }
+            
+            // 延迟500ms后刷新页面，让用户看到成功消息
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+            
         } else {
             const errorDiv = document.getElementById('authError');
             if (errorDiv) {

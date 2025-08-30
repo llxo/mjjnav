@@ -120,12 +120,16 @@ class App {
     }
 }
 
-// 创建并启动应用
-const app = new App();
-app.init();
-
-// 将应用实例暴露到全局作用域（用于调试）
-window.app = app;
+// 创建并启动应用（防止重复创建）
+if (!window.app) {
+    const app = new App();
+    app.init();
+    
+    // 将应用实例暴露到全局作用域（用于调试）
+    window.app = app;
+} else {
+    console.log('应用实例已存在，跳过重复创建');
+}
 
 // 初始化图标容器的拖拽滚动功能
 document.addEventListener('DOMContentLoaded', () => {

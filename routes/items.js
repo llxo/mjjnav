@@ -1,11 +1,11 @@
 const express = require('express');
 const { db } = require('../db/init');
-const { sessionAuthenticate } = require('../middleware/auth');
+const { requireAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
 // 获取所有导航项
-router.get('/', (req, res) => {
+router.get('/', requireAuth, (req, res) => {
   const archived = req.query.archived === 'true';
   
   const query = `
@@ -25,7 +25,7 @@ router.get('/', (req, res) => {
 });
 
 // 创建新导航项
-router.post('/', sessionAuthenticate, (req, res) => {
+router.post('/', requireAuth, (req, res) => {
   const { title, url, description, category_id, icon } = req.body;
 
   if (!title || !url) {
@@ -54,7 +54,7 @@ router.post('/', sessionAuthenticate, (req, res) => {
 });
 
 // 更新排序 (必须放在 /:id 路由之前)
-router.put('/reorder', sessionAuthenticate, (req, res) => {
+router.put('/reorder', requireAuth, (req, res) => {
   const { items } = req.body; // 期望格式: [{ id: 1, sort_order: 1 }, { id: 2, sort_order: 2 }]
 
   if (!Array.isArray(items) || items.length === 0) {
@@ -93,7 +93,7 @@ router.put('/reorder', sessionAuthenticate, (req, res) => {
 });
 
 // 更新导航项归档状态
-router.put('/:id/archive', sessionAuthenticate, (req, res) => {
+router.put('/:id/archive', requireAuth, (req, res) => {
   const { id } = req.params;
   const { is_archived } = req.body;
 
@@ -117,7 +117,7 @@ router.put('/:id/archive', sessionAuthenticate, (req, res) => {
 });
 
 // 更新导航项
-router.put('/:id', sessionAuthenticate, (req, res) => {
+router.put('/:id', requireAuth, (req, res) => {
   const { id } = req.params;
   const { title, url, description, category_id, icon } = req.body;
 
@@ -141,7 +141,7 @@ router.put('/:id', sessionAuthenticate, (req, res) => {
 });
 
 // 删除导航项
-router.delete('/:id', sessionAuthenticate, (req, res) => {
+router.delete('/:id', requireAuth, (req, res) => {
   const { id } = req.params;
 
   db.run('DELETE FROM navigation_items WHERE id = ?', [id], function(err) {

@@ -2,45 +2,15 @@
 class ApiService {
     constructor() {
         this.baseURL = '/api';
-        
-        // 在实例化时尝试加载导航项，以提高页面加载速度
-        this._prefetchItems();
-        // 在实例化时尝试加载倒计时事件
-        this._prefetchCountdownEvents();
+        // 移除预加载功能，等待验证通过后再加载数据
     }
 
-    _prefetchItems() {
-        // 提前获取导航项数据并缓存
-        this.itemsCache = fetch(this.baseURL + '/items')
-            .then(response => response.json())
-            .catch(error => {
-                console.error('预加载导航项失败:', error);
-                return []; // 失败时返回空数组
-            });
-    }
-    
-    // 预加载倒计时事件
-    _prefetchCountdownEvents() {
-        // 提前获取倒计时事件数据并缓存
-        this.countdownEventsCache = fetch(this.baseURL + '/countdown')
-            .then(response => response.json())
-            .catch(error => {
-                console.error('预加载倒计时事件失败:', error);
-                return []; // 失败时返回空数组
-            });
-    }
-    
-    // 获取导航项的简化方法，优先使用缓存
+    // 获取导航项
     async getItems(archived = false) {
         try {
             if (archived) {
-                // 对于归档项，仍然需要正常请求
                 return await this.call(`/items?archived=true`, { method: 'GET' });
-            } else if (this.itemsCache) {
-                // 对于首页导航项，优先使用缓存
-                return await this.itemsCache;
             } else {
-                // 如果没有缓存，则正常请求
                 return await this.call('/items', { method: 'GET' });
             }
         } catch (error) {
@@ -51,6 +21,11 @@ class ApiService {
 
     async call(url, options = {}) {
         try {
+            // 检查是否已通过验证（除了密钥检查相关的API）
+            if (!window.isAuthenticated && !url.includes('/secret/')) {
+                throw new Error('未通过身份验证');
+            }
+            
             // 添加会话token到请求头
             const headers = {
                 'Content-Type': 'application/json',
@@ -90,7 +65,9 @@ class ApiService {
             return data;
         } catch (error) {
             console.error('API调用错误:', error);
-            NotificationService.show('操作失败: ' + error.message, 'error');
+            if (window.NotificationService) {
+                NotificationService.show('操作失败: ' + error.message, 'error');
+            }
             throw error;
         }
     }    // 导航项相关API
@@ -128,19 +105,7 @@ class ApiService {
         });
     }    // 倒计时相关API
     async getCountdownEvents() {
-        try {
-            if (this.countdownEventsCache) {
-                // 优先使用缓存
-                return await this.countdownEventsCache;
-            } else {
-                // 如果没有缓存，则正常请求
-                return await this.call('/countdown');
-            }
-        } catch (error) {
-            console.error('获取倒计时事件失败:', error);
-            // 出错时尝试直接调用API
-            return this.call('/countdown');
-        }
+        return this.call('/countdown');
     }async createCountdownEvent(data) {
         return this.call('/countdown', {
             method: 'POST',
@@ -171,21 +136,29 @@ class ApiService {
     
     // 密钥管理相关API
     async checkSecretKeyExists() {
-        return this.call('/secret/check');
+        // 密钥检查不需要验证
+        const response = await fetch(this.baseURL + '/secret/check');
+        return response.json();
     }
     
     async verifySecretKey(secretKey) {
-        return this.call('/secret/verify', {
+        // 密钥验证不需要预先验证
+        const response = await fetch(this.baseURL + '/secret/verify', {
             method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ secretKey })
         });
+        return { response, data: await response.json() };
     }
     
     async setupSecretKey(secretKey) {
-        return this.call('/secret/setup', {
+        // 密钥设置不需要预先验证
+        const response = await fetch(this.baseURL + '/secret/setup', {
             method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ secretKey })
         });
+        return { response, data: await response.json() };
     }
     
     async changeSecretKey(currentSecretKey, newSecretKey) {
@@ -202,5 +175,9 @@ class ApiService {
     }
 }
 
-// 创建全局API服务实例
-window.apiService = new ApiService();
+// 创建全局API服务实例（防止重复创建）
+if (!window.apiService) {
+    window.apiService = new ApiService();
+} else {
+    console.log('ApiService实例已存在，跳过重复创建');
+}

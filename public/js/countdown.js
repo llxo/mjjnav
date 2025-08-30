@@ -477,4 +477,9 @@ class CountdownService {
 }
 
 // 创建全局倒计时服务实例
-window.countdownService = new CountdownService();
+// 创建全局倒计时服务实例（防止重复创建）
+if (!window.countdownService) {
+    window.countdownService = new CountdownService();
+} else {
+    console.log('CountdownService实例已存在，跳过重复创建');
+}

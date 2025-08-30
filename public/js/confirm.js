@@ -90,7 +90,12 @@ class CustomConfirm {
 }
 
 // 创建全局实例
-window.customConfirm = new CustomConfirm();
+// 创建全局确认对话框实例（防止重复创建）
+if (!window.customConfirm) {
+    window.customConfirm = new CustomConfirm();
+} else {
+    console.log('CustomConfirm实例已存在，跳过重复创建');
+}
 
 // 提供便捷的调用方法
 window.showConfirm = (options) => {

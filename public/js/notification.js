@@ -37,5 +37,9 @@ class NotificationService {
     }
 }
 
-// 添加到全局作用域
-window.NotificationService = NotificationService;
+// 添加到全局作用域（防止重复声明）
+if (!window.NotificationService) {
+    window.NotificationService = NotificationService;
+} else {
+    console.log('NotificationService已存在，跳过重复声明');
+}

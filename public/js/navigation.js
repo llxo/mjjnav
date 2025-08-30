@@ -702,5 +702,9 @@ class NavigationService {
     }
 }
 
-// 创建全局导航服务实例
-window.navigationService = new NavigationService();
+// 创建全局导航服务实例（防止重复创建）
+if (!window.navigationService) {
+    window.navigationService = new NavigationService();
+} else {
+    console.log('NavigationService实例已存在，跳过重复创建');
+}

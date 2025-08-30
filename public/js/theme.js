@@ -73,4 +73,9 @@ class ThemeService {
 }
 
 // 创建全局主题服务实例
-window.themeService = new ThemeService();
+// 创建全局主题服务实例（防止重复创建）
+if (!window.themeService) {
+    window.themeService = new ThemeService();
+} else {
+    console.log('ThemeService实例已存在，跳过重复创建');
+}
