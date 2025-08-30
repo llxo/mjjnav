@@ -157,8 +157,110 @@
     <script src="/js/notification.js"></script>
     <script src="/js/confirm.js"></script>
     <script src="/js/api.js"></script>
+    
+    <!-- 创建API服务实例 -->
+    <script>
+        // 提前初始化API服务，方便归档服务调用
+        window.apiService = new ApiService();
+    </script>
+    
     <script src="/js/secret.js"></script>
-    <script src="/js/archive.js"></script>
+    
+    <!-- 等待身份验证后再加载归档服务 -->
+    <script>
+        // 等待身份验证完成后加载归档服务
+        function waitForAuthAndLoadArchive() {
+            // 检查是否已通过验证
+            if (window.isAuthenticated) {
+                loadArchiveService();
+                return;
+            }
+            
+            // 如果密钥管理器存在，监听其状态
+            if (window.secretKeyManager) {
+                // 检查是否未设置密钥或已有有效token
+                if (!window.secretKeyManager.hasSecretKey || window.secretKeyManager.sessionToken) {
+                    // 进一步验证
+                    checkAuthenticationStatus();
+                } else {
+                    // 每200ms检查一次认证状态
+                    setTimeout(waitForAuthAndLoadArchive, 200);
+                }
+            } else {
+                // 如果密钥管理器还未初始化，稍等后重试
+                setTimeout(waitForAuthAndLoadArchive, 100);
+            }
+        }
+
+        // 检查认证状态
+        async function checkAuthenticationStatus() {
+            try {
+                if (!window.secretKeyManager.hasSecretKey) {
+                    // 未设置密钥，允许访问
+                    if (!window.isAuthenticated) {
+                        window.isAuthenticated = true;
+                        loadArchiveService();
+                    }
+                } else if (window.secretKeyManager.sessionToken) {
+                    // 有token，验证是否有效
+                    try {
+                        const response = await fetch('/api/items', {
+                            headers: {
+                                'x-session-token': window.secretKeyManager.sessionToken
+                            }
+                        });
+                        
+                        if (response.ok) {
+                            // token有效
+                            if (!window.isAuthenticated) {
+                                window.isAuthenticated = true;
+                                loadArchiveService();
+                            }
+                        } else {
+                            // token无效，跳转到首页重新验证
+                            window.location.href = '/';
+                        }
+                    } catch (error) {
+                        console.error('验证token失败:', error);
+                        window.location.href = '/';
+                    }
+                } else {
+                    // 需要验证，跳转到首页
+                    window.location.href = '/';
+                }
+            } catch (error) {
+                console.error('检查认证状态失败:', error);
+                window.location.href = '/';
+            }
+        }
+
+        // 加载归档服务
+        function loadArchiveService() {
+            // 检查是否已经加载过
+            if (window.archiveServiceLoaded) {
+                return;
+            }
+            window.archiveServiceLoaded = true;
+            
+            // 动态加载归档服务脚本
+            const script = document.createElement('script');
+            script.src = '/js/archive.js';
+            script.onload = function() {
+                console.log('归档服务加载完成');
+            };
+            script.onerror = function() {
+                console.error('归档服务加载失败');
+            };
+            document.head.appendChild(script);
+        }
+
+        // 如果文档已加载完成，立即执行；否则等待DOMContentLoaded事件
+        if (document.readyState !== 'loading') {
+            waitForAuthAndLoadArchive();
+        } else {
+            document.addEventListener('DOMContentLoaded', waitForAuthAndLoadArchive);
+        }
+    </script>
 </body>
 
 </html>

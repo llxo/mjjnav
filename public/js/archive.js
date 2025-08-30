@@ -229,8 +229,8 @@ class ArchiveService {
     }
 }
 
-// 初始化归档服务
-document.addEventListener('DOMContentLoaded', () => {
+// 初始化归档服务 - 由外部脚本调用，不依赖DOMContentLoaded
+function initArchiveServiceWhenReady() {
     // 手动应用当前存储的主题设置（以防主题服务初始化失败）
     const isDark = localStorage.getItem('theme') === 'dark' || 
         (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
@@ -258,7 +258,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    // 初始化归档服务
+    // 防止重复初始化
+    if (window.archiveService) {
+        console.log('归档服务已存在，跳过重复初始化');
+        return;
+    }
+    
+    console.log('初始化归档服务');
     window.archiveService = new ArchiveService();
     window.archiveService.init();
-});
+}
+
+// 检查DOM是否准备就绪，如果是则立即初始化归档服务
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    initArchiveServiceWhenReady();
+} else {
+    // 否则等待DOM完全加载
+    document.addEventListener('DOMContentLoaded', initArchiveServiceWhenReady);
+}
